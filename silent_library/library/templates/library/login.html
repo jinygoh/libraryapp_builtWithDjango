@@ -20,14 +20,10 @@
                         </div>
                     {% endif %}
                     
-                    {# Using form.as_p for simplicity. For Bootstrap styling, render fields individually or use django-crispy-forms #}
-                    {{ form.as_p }}
-                    
-                    {# Example for manual field rendering (if not using form.as_p or crispy-forms):
                     {% for field in form %}
                         <div class="mb-3">
                             <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                            <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" id="{{ field.id_for_label }}" class="form-control" {% if field.field.required %}required{% endif %}>
+                            {{ field }}
                             {% if field.help_text %}
                                 <div class="form-text">{{ field.help_text }}</div>
                             {% endif %}
@@ -36,7 +32,7 @@
                             {% endfor %}
                         </div>
                     {% endfor %}
-                    #}
+                    
 
                     <div class="d-grid mt-3">
                         <button type="submit" class="btn btn-primary btn-lg">Login</button>

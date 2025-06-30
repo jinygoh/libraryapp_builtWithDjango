@@ -25,15 +25,15 @@
                             <div class="d-flex w-100 justify-content-between">
                                 <h5 class="mb-1">{{ book.title }}</h5>
                                 <small class="text-muted">
-                                    {% if book.is_available %}
+                                    {% if book.available_copies > 0 %}
                                         <span class="badge bg-success">Available</span>
                                     {% else %}
                                         <span class="badge bg-warning text-dark">Borrowed</span>
                                     {% endif %}
                                 </small>
                             </div>
-                            <p class="mb-1">By {{ book.author }}</p>
-                            <small class="text-muted">Genre: {{ book.genre }} | ISBN: {{ book.isbn|default:'N/A' }}</small>
+                            <p class="mb-1">By {{ book.authors.all|join:", " }}</p>
+                            <small class="text-muted">Genre: {{ book.genres.all|join:", " }} | ISBN: {{ book.isbn|default:'N/A' }}</small>
                         </a>
                     {% endfor %}
                 </div>

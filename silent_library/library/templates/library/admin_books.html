@@ -29,8 +29,8 @@
                 <tr>
                     <th>ID</th>
                     <th>Title</th>
-                    <th>Author</th>
-                    <th>Genre</th>
+                    <th>Authors</th>
+                    <th>Genres</th>
                     <th>ISBN</th>
                     <th>Available</th>
                     <th>Actions</th>
@@ -41,11 +41,11 @@
                 <tr>
                     <td>{{ book.id }}</td>
                     <td>{{ book.title }}</td>
-                    <td>{{ book.author }}</td>
-                    <td>{{ book.genre }}</td>
+                    <td>{{ book.authors.all|join:", " }}</td>
+                    <td>{{ book.genres.all|join:", " }}</td>
                     <td>{{ book.isbn }}</td>
                     <td>
-                        {% if book.is_available %}
+                        {% if book.available_copies > 0 %}
                             <span class="badge bg-success">Yes</span>
                         {% else %}
                             <span class="badge bg-danger">No</span>

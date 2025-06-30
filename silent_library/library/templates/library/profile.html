@@ -1,83 +1,58 @@
 {% extends 'library/base.html' %}
 
-{% block title %}My Profile - Silent Library{% endblock %}
-
 {% block content %}
-<div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-10 col-lg-8">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h2 class="mb-0">My Profile</h2>
-                </div>
-                <div class="card-body">
-                    <h4 class="mb-3">Account Details</h4>
-                    <dl class="row">
-                        <dt class="col-sm-3">Username:</dt>
-                        <dd class="col-sm-9">{{ user.username }}</dd>
 
-                        <dt class="col-sm-3">Email:</dt>
-                        <dd class="col-sm-9">{{ user.email }}</dd>
-
-                        <dt class="col-sm-3">First Name:</dt>
-                        <dd class="col-sm-9">{{ user.first_name|default:"Not set" }}</dd>
-
-                        <dt class="col-sm-3">Last Name:</dt>
-                        <dd class="col-sm-9">{{ user.last_name|default:"Not set" }}</dd>
-                    </dl>
-
-                    <hr class="my-4">
-                    
-                    <h4 class="mb-3">Edit Profile</h4>
-                    <form method="post" novalidate>
-                        {% csrf_token %}
-                        
-                        {# Render non-field errors if any #}
-                        {% if form.non_field_errors %}
-                            <div class="alert alert-danger">
-                                {% for error in form.non_field_errors %}
-                                    <p class="mb-0">{{ error }}</p>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-
-                        {# Using form.as_p for simplicity. For Bootstrap styling, render fields individually or use django-crispy-forms #}
-                        {{ form.as_p }}
-
-                        {# 
-                        Example for manual field rendering (if not using form.as_p or crispy-forms):
-                        This would typically be for a UserProfileForm or a UserChangeForm.
-                        Let's assume `form` is an instance of a Django form for editing user details.
-                        
-                        {% for field in form %}
-                            <div class="mb-3">
-                                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                                <input type="{{ field.field.widget.input_type }}" 
-                                       name="{{ field.name }}" 
-                                       id="{{ field.id_for_label }}" 
-                                       class="form-control {% if field.errors %}is-invalid{% endif %}" 
-                                       value="{{ field.value|default_if_none:'' }}"
-                                       {% if field.field.required %}required{% endif %}>
-                                {% if field.help_text %}
-                                    <div class="form-text">{{ field.help_text }}</div>
-                                {% endif %}
-                                {% for error in field.errors %}
-                                    <div class="invalid-feedback d-block">{{ error }}</div>
-                                {% endfor %}
-                            </div>
-                        {% endfor %}
-                        #}
-                        
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-lg">Update Profile</button>
-                        </div>
-                    </form>
-                    <div class="mt-3">
-                        <a href="{% url 'password_reset' %}" class="btn btn-outline-secondary">Change Password</a>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <div class="card mb-4">
+    <div class="card-header">Account Details</div>
+    <div class="card-body">
+      <p><strong>Username:</strong> {{ user.username }}</p>
+      <p><strong>Email:</strong> {{ user.email }}</p>
+      <p><strong>First Name:</strong> {{ user.first_name }}</p>
+      <p><strong>Last Name:</strong> {{ user.last_name }}</p>
     </div>
-</div>
+  </div>
+
+  <h2>Edit Profile</h2>
+
+  <div class="card mb-4">
+    <div class="card-header">Edit First and Last Name</div>
+    <div class="card-body">
+      <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" name="edit_profile" class="btn btn-primary">Save Changes</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header">Edit Username and Email</div>
+    <div class="card-body">
+      <form method="post">
+        {% csrf_token %}
+        {{ username_email_form.as_p }}
+        <button type="submit" name="edit_username_email" class="btn btn-primary">Save Changes</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">Change Password</div>
+    <div class="card-body">
+      <form method="post">
+        {% csrf_token %}
+        {% for field in password_form %}
+          <div class="form-group">
+            {{ field.label_tag }}
+            {{ field }}
+            {% for error in field.errors %}
+              <div class="alert alert-danger">{{ error }}</div>
+            {% endfor %}
+          </div>
+        {% endfor %}
+
+        <button type="submit" name="change_password" class="btn btn-primary">Change Password</button>
+      </form>
+    </div>
+  </div>
 {% endblock %}

@@ -23,9 +23,18 @@
                             </div>
                         {% endif %}
 
-                        {# Using form.as_p for simplicity. For full Bootstrap styling of fields, #}
-                        {# you'd typically render each field individually or use a package like django-crispy-forms. #}
-                        {{ form.as_p }}
+                        {% for field in form %}
+                            <div class="mb-3">
+                                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.help_text %}
+                                    <div class="form-text">{{ field.help_text }}</div>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
 
                         {# 
                         Example for manual field rendering (if `form` is a ModelForm for Book):

@@ -24,9 +24,7 @@
                     {# For proper Bootstrap styling, you'd typically render fields individually or use a package like django-crispy-forms #}
                     {# Example of how you might structure it for manual rendering or with crispy-forms #}
                     
-                    {{ form.as_p }} 
-
-                    {# If rendering fields manually, it would look something like this:
+                    
                     {% for field in form %}
                         <div class="mb-3">
                             <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
@@ -39,7 +37,7 @@
                             {% endfor %}
                         </div>
                     {% endfor %}
-                    #}
+                    
 
                     <div class="d-grid">
                         <button type="submit" class="btn btn-primary btn-lg">Register</button>
