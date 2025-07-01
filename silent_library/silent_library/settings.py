@@ -1,3 +1,10 @@
+# File: silent_library/silent_library/settings.py
+# Purpose: This file contains the core configuration for the Silent Library Django project.
+# It defines settings for various aspects of the application, including installed apps,
+# database connections, template rendering, static file handling, middleware,
+# internationalization, and custom project-specific settings like email configuration
+# and the authentication user model. This file is central to how the Django project behaves
+# and interacts with its different components (like apps, database, etc.).
 """
 Django settings for silent_library project.
 
@@ -9,13 +16,20 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-import os
-from dotenv import load_dotenv
-from pathlib import Path
+import os # Standard library for interacting with the operating system, used here for environment variables.
+from dotenv import load_dotenv # Imports the function to load environment variables from a .env file.
+from pathlib import Path # Provides an object-oriented way to handle filesystem paths.
 
+# Load environment variables from a .env file in the project's root.
+# This allows sensitive information like API keys or database credentials to be kept out of version control.
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+# BASE_DIR points to the root directory of the Django project (i.e., the directory containing 'manage.py').
+# `Path(__file__)` is the path to this settings.py file.
+# `.resolve()` makes it an absolute path.
+# `.parent` moves up one directory level (from 'settings.py' to 'silent_library/' project config folder).
+# `.parent` moves up another directory level (from 'silent_library/' project config folder to the project root 'silent_library/').
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -23,127 +37,174 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+# This key is used for cryptographic signing (e.g., sessions, password reset tokens).
+# It's loaded from an environment variable for security, so it's not hardcoded.
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True enables detailed error pages, which can expose sensitive information.
+# For production, this should be set to False.
+DEBUG = True # Currently set for development.
 
+# A list of strings representing the host/domain names that this Django site can serve.
+# This is a security measure to prevent HTTP Host header attacks.
+# An empty list allows any host, which is suitable for local development but not production.
 ALLOWED_HOSTS = []
 
 
 # Application definition
-
+# INSTALLED_APPS lists all Django applications that are activated for this project.
+# Django's built-in apps provide common functionalities (admin, auth, sessions).
+# 'library' is our custom application for the library's specific features.
 INSTALLED_APPS = [
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-    "library",
+    "django.contrib.admin",  # The Django admin site.
+    "django.contrib.auth",  # Django's authentication framework.
+    "django.contrib.contenttypes",  # Framework for content types (used by auth and admin).
+    "django.contrib.sessions",  # Session framework.
+    "django.contrib.messages",  # Messaging framework (for user feedback).
+    "django.contrib.staticfiles",  # Framework for managing static files (CSS, JS, images).
+    "library",  # Our custom library application.
 ]
 
+# MIDDLEWARE is a list of classes that process requests and responses globally.
+# Order matters: request middleware is applied top-down, response middleware bottom-up.
 MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django.middleware.security.SecurityMiddleware", # Implements various security enhancements.
+    "django.contrib.sessions.middleware.SessionMiddleware", # Enables session support.
+    "django.middleware.common.CommonMiddleware", # Handles common operations like URL rewriting.
+    "django.middleware.csrf.CsrfViewMiddleware", # Adds Cross-Site Request Forgery protection.
+    "django.contrib.auth.middleware.AuthenticationMiddleware", # Adds the `user` attribute to requests.
+    "django.contrib.messages.middleware.MessageMiddleware", # Enables cookie- and session-based messaging.
+    "django.middleware.clickjacking.XFrameOptionsMiddleware", # Provides Clickjacking protection.
 ]
 
+# ROOT_URLCONF specifies the Python module where the project's root URL patterns are defined.
+# This points to 'silent_library/urls.py' (the project-level urls.py).
 ROOT_URLCONF = "silent_library.urls"
 
+# TEMPLATES configures how Django finds and renders templates (HTML files).
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'BACKEND': 'django.template.backends.django.DjangoTemplates', # Specifies the Django template engine.
+        # 'DIRS' is a list of directories where Django should look for project-level templates.
+        # Here, it's configured to look in a 'templates' directory inside the 'silent_library' project config folder.
         'DIRS': [os.path.join(BASE_DIR, 'silent_library', 'templates')],
+        # 'APP_DIRS': True tells Django to look for a 'templates' subdirectory within each installed app.
+        # This is how app-specific templates (like 'library/templates/library/home.html') are found.
         'APP_DIRS': True,
         'OPTIONS': {
+            # 'context_processors' add variables to the context of all templates.
             'context_processors': [
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.debug', # Adds debug-related variables if DEBUG is True.
+                'django.template.context_processors.request', # Adds the current HttpRequest ('request') object to template context.
+                'django.contrib.auth.context_processors.auth', # Adds the 'user' and 'perms' variables to template context.
+                'django.contrib.messages.context_processors.messages', # Adds 'messages' (from contrib.messages) to template context.
             ],
         },
     },
 ]
 
+# WSGI_APPLICATION specifies the path to the WSGI application object that Django's built-in
+# development server (and production WSGI servers) will use.
+# This points to 'silent_library/wsgi.py'.
 WSGI_APPLICATION = "silent_library.wsgi.application"
 
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
+# DATABASES configures the connection parameters for the project's database(s).
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": os.getenv('DB_NAME'),
-        "USER": os.getenv('DB_USER'),  # Replace with your MySQL username
-        "PASSWORD": os.getenv('DB_PASSWORD'),  # Replace with your MySQL password
-        "HOST": "localhost",  # Or your MySQL host
-        "PORT": "3306",  # Or your MySQL port
+    "default": { # 'default' is the alias for the primary database.
+        "ENGINE": "django.db.backends.mysql", # Specifies the database backend (MySQL in this case).
+        "NAME": os.getenv('DB_NAME'), # Database name, loaded from environment variable.
+        "USER": os.getenv('DB_USER'),  # MySQL username, from environment variable.
+        "PASSWORD": os.getenv('DB_PASSWORD'),  # MySQL password, from environment variable.
+        "HOST": "localhost",  # Database host address (e.g., 'localhost' or an IP/domain).
+        "PORT": "3306",  # Database port (default for MySQL is 3306).
     }
 }
 
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
-
+# AUTH_PASSWORD_VALIDATORS is a list of validators used to check user passwords for strength.
 AUTH_PASSWORD_VALIDATORS = [
     {
+        # Checks if the password is too similar to the user's attributes (username, email, etc.).
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
+        # Checks if the password meets a minimum length requirement.
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
+        # Checks if the password is a common password.
         "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
+        # Checks if the password consists only of numeric characters.
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
 
-# Internationalization
+# Internationalization (i18n) and Localization (l10n) settings.
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+# LANGUAGE_CODE defines the default language for the project.
+LANGUAGE_CODE = "en-us" # English (United States).
 
-TIME_ZONE = "UTC"
+# TIME_ZONE defines the default time zone for the project.
+TIME_ZONE = "UTC" # Coordinated Universal Time.
 
+# USE_I18N = True enables Django's translation system.
 USE_I18N = True
 
+# USE_TZ = True enables timezone-aware datetimes. Django will store datetimes in UTC in the database
+# and convert them to the end-user's timezone for display (if configured).
 USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
+# STATIC_URL is the base URL path from which static files will be served (e.g., '/static/').
+# In templates, {% static 'path/to/file.css' %} will resolve to '/static/path/to/file.css'.
 STATIC_URL = "static/"
+# Note: For serving static files in production, you also need to configure STATIC_ROOT
+# and run `collectstatic`. For development, Django's dev server handles this automatically if APP_DIRS=True
+# or if STATICFILES_DIRS is configured.
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
-
+# DEFAULT_AUTO_FIELD specifies the type of auto-created primary key fields for models.
+# BigAutoField is a 64-bit integer, suitable for tables that might grow very large.
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# AUTH_USER_MODEL specifies the model to use for representing Users.
+# This allows using a custom user model instead of Django's default `django.contrib.auth.models.User`.
+# Here, it's set to the 'User' model within the 'library' app.
 AUTH_USER_MODEL = "library.User"
 
 ############################ Email Configuration ############################
-# Email server configuration
+# Settings for sending emails from the application (e.g., for registration confirmation, password reset).
+
+# EMAIL_BACKEND specifies the backend to use for sending emails.
+# 'django.core.mail.backends.smtp.EmailBackend' uses an SMTP server.
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-#Gmail SMTP server settings
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True  # Use TLS (recommended for Gmail)
 
-# Authentication details
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')  # Your Gmail address
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')  # The App Password you generated for Module 2
+# Gmail SMTP server settings (example configuration for Gmail).
+EMAIL_HOST = 'smtp.gmail.com' # SMTP server address for Gmail.
+EMAIL_PORT = 587 # Port for TLS-encrypted SMTP.
+EMAIL_USE_TLS = True  # Use TLS (Transport Layer Security) for a secure connection. Recommended for Gmail.
 
-# Default sender address for emails
+# Authentication details for the SMTP server.
+# These are loaded from environment variables for security.
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')  # Your Gmail address (or other email provider's username).
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')  # Your Gmail App Password (or other email provider's password).
+
+# Default sender address for emails sent from the website (e.g., in the "From" field).
+# Uses the EMAIL_HOST_USER if DEFAULT_FROM_EMAIL is not set in environment variables.
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER)
 
 
