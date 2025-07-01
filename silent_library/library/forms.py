@@ -27,9 +27,9 @@ class UserRegistrationForm(UserCreationForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['password'].help_text = "Your password must contain at least one uppercase letter, one lowercase letter, one digit, and one symbol."
+        self.fields['password1'].help_text = "Your password must contain at least one uppercase letter, one lowercase letter, one digit, and one symbol."
         self.fields['password2'].help_text = "Enter the same password as before, for verification."
-        self.fields['password'].validators.append(CharacterVarietyValidator())
+        self.fields['password1'].validators.append(CharacterVarietyValidator())
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
 
