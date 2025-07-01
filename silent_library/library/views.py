@@ -105,10 +105,7 @@ def profile(request):
             update_session_auth_hash(request, user)
             messages.success(request, 'Password updated successfully.')
             return redirect('profile')
-        else:
-            for error_list in password_form.errors.values():
-                for error in error_list:
-                    messages.error(request, error)
+        # Removed the else block that was duplicating form errors into messages
     else:
         password_form = UserEditPasswordForm(user=request.user)
 
