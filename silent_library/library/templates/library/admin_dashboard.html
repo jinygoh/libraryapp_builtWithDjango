@@ -47,9 +47,104 @@
                 <div class="card-body">
                     <h5 class="card-title">Track Borrowed Books</h5>
                     <p class="card-text">View books on loan, manage returns, and handle overdue items and fines.</p>
-                    <a href="#" class="btn btn-light disabled">View Loans</a>
+                    {# This card might be replaced or supplemented by the detailed tables below #}
+                    <a href="#active-loans-section" class="btn btn-light">View Active Loans</a>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Active Loans Section -->
+    <div class="row mt-4" id="active-loans-section">
+        <div class="col-12">
+            <h3 class="mb-3">Currently Active Loans</h3>
+            {% if active_loans %}
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th scope="col">Book Title</th>
+                                <th scope="col">Borrower</th>
+                                <th scope="col">Borrow Date</th>
+                                <th scope="col">Due Date</th>
+                                <th scope="col">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for loan in active_loans %}
+                            <tr>
+                                <td>{{ loan.book.title }}</td>
+                                <td>{{ loan.user.username }}</td>
+                                <td>{{ loan.borrow_date|date:"Y-m-d H:i" }}</td>
+                                <td>{{ loan.due_date|date:"Y-m-d" }}</td>
+                                <td><span class="badge
+                                    {% if loan.status == 'borrowed' %}bg-primary
+                                    {% elif loan.status == 'overdue' %}bg-danger
+                                    {% else %}bg-secondary{% endif %}">
+                                    {{ loan.get_status_display }}
+                                </span></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info" role="alert">
+                    No books are currently on loan.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Overdue Books and Fines Section -->
+    <div class="row mt-4" id="overdue-books-section">
+        <div class="col-12">
+            <h3 class="mb-3">Overdue Books and Fines (as of {{ today|date:"Y-m-d" }})</h3>
+            {% if overdue_books_with_fines %}
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-danger"> <!-- Using table-danger for overdue header -->
+                            <tr>
+                                <th scope="col">Book Title</th>
+                                <th scope="col">Borrower</th>
+                                <th scope="col">Due Date</th>
+                                <th scope="col">Days Overdue</th>
+                                <th scope="col">Fine Amount ($)</th>
+                                <th scope="col">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in overdue_books_with_fines %}
+                            <tr>
+                                <td>{{ item.loan.book.title }}</td>
+                                <td>{{ item.loan.user.username }}</td>
+                                <td>{{ item.loan.due_date|date:"Y-m-d" }}</td>
+                                <td>{{ item.days_overdue }}</td>
+                                <td>{{ item.fine_amount|floatformat:2 }}</td>
+                                <td><span class="badge bg-danger">
+                                    {{ item.loan.get_status_display }}
+                                </span></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-success" role="alert">
+                    No books are currently overdue.
+                </div>
+            {% endif %}
+
+            {% if overdue_books_with_fines %}
+            <div class="mt-3">
+                <form method="POST" action="{% url 'send_overdue_emails' %}" onsubmit="return confirm('Are you sure you want to send overdue email notifications to all relevant borrowers?');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-envelope"></i> Send Bulk Overdue Email Notifications
+                    </button>
+                </form>
+            </div>
+            {% endif %}
         </div>
     </div>
 

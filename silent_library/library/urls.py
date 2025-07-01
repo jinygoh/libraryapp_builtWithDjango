@@ -25,4 +25,5 @@ urlpatterns = [
     path('admin/books/add/', views.add_book, name='add_book'),
     path('admin/books/edit/<int:book_id>/', views.edit_book, name='edit_book'),
     path('admin/books/delete/<int:book_id>/', views.delete_book, name='delete_book'),
+    path('admin/send_overdue_emails/', views.bulk_email_overdue_borrowers, name='send_overdue_emails'),
 ]
