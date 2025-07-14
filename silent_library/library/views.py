@@ -3,7 +3,7 @@ from django.contrib.auth import login, logout, authenticate, update_session_auth
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.urls import reverse_lazy
 from django.contrib import messages
-from django.core.mail import send_mail
+from django.core.mail import send_mail, send_mass_mail
 from .models import Book, Author, Genre, Loan, Review
 from .forms import UserRegistrationForm, UserLoginForm, UserEditForm, BookForm, ReviewForm
 from django.db.models import Q
@@ -148,10 +148,7 @@ from django.db.models import Q # Ensure Q is imported if not already for LoanSta
 @user_passes_test(is_admin, login_url=reverse_lazy('login'))
 def admin_dashboard(request):
     import datetime # For calculating overdue fines
-from django.utils import timezone # More robust for today's date if timezone awareness is needed
-
-@user_passes_test(is_admin, login_url=reverse_lazy('login'))
-def admin_dashboard(request):
+    from django.utils import timezone # More robust for today's date if timezone awareness is needed
     # Active Loans (already implemented)
     active_loans = Loan.objects.filter(
         Q(status=LoanStatus.BORROWED) | Q(status=LoanStatus.OVERDUE)
@@ -200,6 +197,8 @@ def admin_dashboard(request):
     }
     return render(request, 'library/admin_dashboard.html', context)
 
+
+from django.utils import timezone
 
 @user_passes_test(is_admin, login_url=reverse_lazy('login'))
 def bulk_email_overdue_borrowers(request):
@@ -261,39 +260,16 @@ def bulk_email_overdue_borrowers(request):
 
         if messages_to_send:
             try:
-                # send_mass_mail returns the number of successfully sent emails
-                num_sent = send_mail( # Corrected: send_mail does not return count, use loop or send_mass_mail
-                    subject="[Placeholder Subject]", # This will be overridden per message if using send_mass_mail
-                    message="[Placeholder Body]", # This will be overridden
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[m[3][0] for m in messages_to_send], # Extract emails
-                    fail_silently=False, # We want to catch errors
-                    # For individual messages within a loop:
-                    # html_message=None # if you have html version
-                )
-                # The above send_mail structure is wrong for bulk.
-                # Let's use a loop with send_mail for simplicity in error tracking per user for now.
-                # Or set up send_mass_mail correctly.
-
-                # Correct approach with a loop for send_mail:
-                actually_sent_count = 0
-                for subject, message_body, from_addr, recipient in messages_to_send:
-                    try:
-                        send_mail(subject, message_body, from_addr, recipient, fail_silently=False)
-                        actually_sent_count += 1
-                    except Exception as e:
-                        messages.warning(request, f"Failed to send email to {recipient[0]}: {str(e)}")
-                        failed_users_count +=1
-
-                notified_users_count = actually_sent_count
+                # Use send_mass_mail for efficiency
+                num_sent = send_mass_mail(messages_to_send, fail_silently=False)
+                notified_users_count = num_sent
+                failed_users_count = len(messages_to_send) - num_sent
 
                 if notified_users_count > 0:
                     messages.success(request, f'Successfully sent {notified_users_count} overdue notices.')
                 if failed_users_count > 0:
                     messages.error(request, f'Failed to send notices to {failed_users_count} users. Check logs for details.')
-                if notified_users_count == 0 and failed_users_count == 0 and messages_to_send:
-                     messages.warning(request, 'Attempted to send notices, but no emails were actually sent. Check email configuration or logs.')
-                elif not messages_to_send:
+                if not messages_to_send:
                     messages.info(request, 'No overdue books found requiring notification.')
 
             except Exception as e:
