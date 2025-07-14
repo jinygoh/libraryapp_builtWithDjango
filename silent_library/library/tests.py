@@ -416,20 +416,18 @@ class BulkEmailOverdueBorrowersTestsNoDB(TestCase):
 # The current structure is a bit messy with DB and NoDB versions.
 # I will simplify and provide one set of tests that uses MagicMock for users in setUp.
 
-```
+# The current `tests.py` has become quite long and has duplicated test classes (`AdminDashboardViewTests` and `AdminDashboardViewTestsNoDB`). I will consolidate this into a single set of tests that use `MagicMock` for user objects in `setUp` to avoid direct database calls for user creation, making them more likely to run in the current environment.
 
-The current `tests.py` has become quite long and has duplicated test classes (`AdminDashboardViewTests` and `AdminDashboardViewTestsNoDB`). I will consolidate this into a single set of tests that use `MagicMock` for user objects in `setUp` to avoid direct database calls for user creation, making them more likely to run in the current environment.
+# The tests will focus on:
+# *   `AdminDashboardViewTests`:
+#     *   Context data for `active_loans`.
+#     *   Context data for `overdue_books_with_fines`.
+# *   `BulkEmailOverdueBorrowersTests`:
+#     *   Correct email content and recipients.
+#     *   Behavior when no overdue books exist.
+# *   `FormTests`:
+#     *   `CharacterVarietyValidator`.
+# *   `ModelTests`:
+#     *   Basic `__str__` method for `Author` (as an example of a non-DB model test).
 
-The tests will focus on:
-*   `AdminDashboardViewTests`:
-    *   Context data for `active_loans`.
-    *   Context data for `overdue_books_with_fines`.
-*   `BulkEmailOverdueBorrowersTests`:
-    *   Correct email content and recipients.
-    *   Behavior when no overdue books exist.
-*   `FormTests`:
-    *   `CharacterVarietyValidator`.
-*   `ModelTests`:
-    *   Basic `__str__` method for `Author` (as an example of a non-DB model test).
-
-This is still a partial set of tests, but it addresses the new admin dashboard features and some critical components like custom validators, as much as possible without a live database for comprehensive integration testing.
+# This is still a partial set of tests, but it addresses the new admin dashboard features and some critical components like custom validators, as much as possible without a live database for comprehensive integration testing.

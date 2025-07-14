@@ -147,7 +147,7 @@ from django.db.models import Q # Ensure Q is imported if not already for LoanSta
 
 @user_passes_test(is_admin, login_url=reverse_lazy('login'))
 def admin_dashboard(request):
-import datetime # For calculating overdue fines
+    import datetime # For calculating overdue fines
 from django.utils import timezone # More robust for today's date if timezone awareness is needed
 
 @user_passes_test(is_admin, login_url=reverse_lazy('login'))
