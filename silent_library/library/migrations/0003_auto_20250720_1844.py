@@ -248,6 +248,312 @@ def add_book_data(apps, schema_editor):
             'isbn': '978-0-552-12475-1',
             'authors': [('Terry', 'Pratchett')],
             'genres': ['Fantasy', 'Comedy']
+        },
+        {
+            'title': 'Good Omens',
+            'isbn': '978-0-552-13703-4',
+            'authors': [('Terry', 'Pratchett'), ('Neil', 'Gaiman')],
+            'genres': ['Fantasy', 'Comedy']
+        },
+        {
+            'title': 'American Gods',
+            'isbn': '978-0-380-78903-0',
+            'authors': [('Neil', 'Gaiman')],
+            'genres': ['Fantasy', 'Mythology']
+        },
+        {
+            'title': 'Stardust',
+            'isbn': '978-0-380-80425-5',
+            'authors': [('Neil', 'Gaiman')],
+            'genres': ['Fantasy', 'Romance']
+        },
+        {
+            'title': 'The Sandman, Vol. 1: Preludes & Nocturnes',
+            'isbn': '978-1-56389-011-8',
+            'authors': [('Neil', 'Gaiman')],
+            'genres': ['Fantasy', 'Comics']
+        },
+        {
+            'title': 'Watchmen',
+            'isbn': '978-0-930289-23-2',
+            'authors': [('Alan', 'Moore')],
+            'genres': ['Comics', 'Science Fiction']
+        },
+        {
+            'title': 'V for Vendetta',
+            'isbn': '978-0-930289-52-2',
+            'authors': [('Alan', 'Moore')],
+            'genres': ['Comics', 'Dystopian']
+        },
+        {
+            'title': 'The League of Extraordinary Gentlemen, Vol. 1',
+            'isbn': '978-1-56389-665-3',
+            'authors': [('Alan', 'Moore')],
+            'genres': ['Comics', 'Fantasy']
+        },
+        {
+            'title': 'Saga, Vol. 1',
+            'isbn': '978-1-60706-601-9',
+            'authors': [('Brian K.', 'Vaughan')],
+            'genres': ['Comics', 'Science Fiction']
+        },
+        {
+            'title': 'Y: The Last Man, Vol. 1: Unmanned',
+            'isbn': '978-1-56389-980-7',
+            'authors': [('Brian K.', 'Vaughan')],
+            'genres': ['Comics', 'Science Fiction']
+        },
+        {
+            'title': 'Persepolis: The Story of a Childhood',
+            'isbn': '978-0-375-71457-3',
+            'authors': [('Marjane', 'Satrapi')],
+            'genres': ['Comics', 'Biography']
+        },
+        {
+            'title': 'Maus: A Survivor\'s Tale',
+            'isbn': '978-0-394-74723-1',
+            'authors': [('Art', 'Spiegelman')],
+            'genres': ['Comics', 'Biography']
+        },
+        {
+            'title': 'Fun Home: A Family Tragicomic',
+            'isbn': '978-0-618-87171-1',
+            'authors': [('Alison', 'Bechdel')],
+            'genres': ['Comics', 'Biography']
+        },
+        {
+            'title': 'Blankets',
+            'isbn': '978-1-891830-43-3',
+            'authors': [('Craig', 'Thompson')],
+            'genres': ['Comics', 'Biography']
+        },
+        {
+            'title': 'Ghost World',
+            'isbn': '978-1-896597-23-9',
+            'authors': [('Daniel', 'Clowes')],
+            'genres': ['Comics', 'Fiction']
+        },
+        {
+            'title': 'Jimmy Corrigan, the Smartest Kid on Earth',
+            'isbn': '978-0-375-71454-2',
+            'authors': [('Chris', 'Ware')],
+            'genres': ['Comics', 'Fiction']
+        },
+        {
+            'title': 'Building Stories',
+            'isbn': '978-0-375-42433-5',
+            'authors': [('Chris', 'Ware')],
+            'genres': ['Comics', 'Fiction']
+        },
+        {
+            'title': 'Asterios Polyp',
+            'isbn': '978-0-307-37732-6',
+            'authors': [('David', 'Mazzucchelli')],
+            'genres': ['Comics', 'Fiction']
+        },
+        {
+            'title': 'The Adventures of Tintin, Vol. 1',
+            'isbn': '978-1-4052-0614-0',
+            'authors': [('Hergé', '')],
+            'genres': ['Comics', 'Adventure']
+        },
+        {
+            'title': 'Calvin and Hobbes',
+            'isbn': '978-0-8362-2088-8',
+            'authors': [('Bill', 'Watterson')],
+            'genres': ['Comics', 'Comedy']
+        },
+        {
+            'title': 'The Far Side',
+            'isbn': '978-0-8362-2062-8',
+            'authors': [('Gary', 'Larson')],
+            'genres': ['Comics', 'Comedy']
+        },
+        {
+            'title': 'The Complete Peanuts, Vol. 1: 1950-1952',
+            'isbn': '978-1-56097-589-6',
+            'authors': [('Charles M.', 'Schulz')],
+            'genres': ['Comics', 'Comedy']
+        },
+        {
+            'title': 'A Brief History of Time',
+            'isbn': '978-0-553-38016-3',
+            'authors': [('Stephen', 'Hawking')],
+            'genres': ['Non-Fiction', 'Science']
+        },
+        {
+            'title': 'Sapiens: A Brief History of Humankind',
+            'isbn': '978-0-06-231609-7',
+            'authors': [('Yuval Noah', 'Harari')],
+            'genres': ['Non-Fiction', 'History']
+        },
+        {
+            'title': 'Homo Deus: A Brief History of Tomorrow',
+            'isbn': '978-0-06-246431-6',
+            'authors': [('Yuval Noah', 'Harari')],
+            'genres': ['Non-Fiction', 'History']
+        },
+        {
+            'title': '21 Lessons for the 21st Century',
+            'isbn': '978-0-525-52069-5',
+            'authors': [('Yuval Noah', 'Harari')],
+            'genres': ['Non-Fiction', 'History']
+        },
+        {
+            'title': 'The Selfish Gene',
+            'isbn': '978-0-19-929115-1',
+            'authors': [('Richard', 'Dawkins')],
+            'genres': ['Non-Fiction', 'Science']
+        },
+        {
+            'title': 'The God Delusion',
+            'isbn': '978-0-618-91824-9',
+            'authors': [('Richard', 'Dawkins')],
+            'genres': ['Non-Fiction', 'Science']
+        },
+        {
+            'title': 'The Blind Watchmaker',
+            'isbn': '978-0-393-31570-7',
+            'authors': [('Richard', 'Dawkins')],
+            'genres': ['Non-Fiction', 'Science']
+        },
+        {
+            'title': 'Guns, Germs, and Steel: The Fates of Human Societies',
+            'isbn': '978-0-393-31755-8',
+            'authors': [('Jared', 'Diamond')],
+            'genres': ['Non-Fiction', 'History']
+        },
+        {
+            'title': 'Collapse: How Societies Choose to Fail or Succeed',
+            'isbn': '978-0-14-303655-5',
+            'authors': [('Jared', 'Diamond')],
+            'genres': ['Non-Fiction', 'History']
+        },
+        {
+            'title': 'The World Until Yesterday: What Can We Learn from Traditional Societies?',
+            'isbn': '978-0-14-312484-9',
+            'authors': [('Jared', 'Diamond')],
+            'genres': ['Non-Fiction', 'History']
+        },
+        {
+            'title': 'The Man Who Mistook His Wife for a Hat and Other Clinical Tales',
+            'isbn': '978-0-684-85394-9',
+            'authors': [('Oliver', 'Sacks')],
+            'genres': ['Non-Fiction', 'Science']
+        },
+        {
+            'title': 'Awakenings',
+            'isbn': '978-0-375-70405-5',
+            'authors': [('Oliver', 'Sacks')],
+            'genres': ['Non-Fiction', 'Science']
+        },
+        {
+            'title': 'Musicophilia: Tales of Music and the Brain',
+            'isbn': '978-1-4000-3353-9',
+            'authors': [('Oliver', 'Sacks')],
+            'genres': ['Non-Fiction', 'Science']
+        },
+        {
+            'title': 'Thinking, Fast and Slow',
+            'isbn': '978-0-374-53355-7',
+            'authors': [('Daniel', 'Kahneman')],
+            'genres': ['Non-Fiction', 'Psychology']
+        },
+        {
+            'title': 'Nudge: Improving Decisions About Health, Wealth, and Happiness',
+            'isbn': '978-0-14-311526-7',
+            'authors': [('Richard H.', 'Thaler'), ('Cass R.', 'Sunstein')],
+            'genres': ['Non-Fiction', 'Psychology']
+        },
+        {
+            'title': 'Freakonomics: A Rogue Economist Explores the Hidden Side of Everything',
+            'isbn': '978-0-06-073133-5',
+            'authors': [('Steven D.', 'Levitt'), ('Stephen J.', 'Dubner')],
+            'genres': ['Non-Fiction', 'Economics']
+        },
+        {
+            'title': 'SuperFreakonomics: Global Cooling, Patriotic Prostitutes, and Why Suicide Bombers Should Buy Life Insurance',
+            'isbn': '978-0-06-088854-1',
+            'authors': [('Steven D.', 'Levitt'), ('Stephen J.', 'Dubner')],
+            'genres': ['Non-Fiction', 'Economics']
+        },
+        {
+            'title': 'The Tipping Point: How Little Things Can Make a Big Difference',
+            'isbn': '978-0-316-34662-7',
+            'authors': [('Malcolm', 'Gladwell')],
+            'genres': ['Non-Fiction', 'Psychology']
+        },
+        {
+            'title': 'Blink: The Power of Thinking Without Thinking',
+            'isbn': '978-0-316-01066-5',
+            'authors': [('Malcolm', 'Gladwell')],
+            'genres': ['Non-Fiction', 'Psychology']
+        },
+        {
+            'title': 'Outliers: The Story of Success',
+            'isbn': '978-0-316-01792-3',
+            'authors': [('Malcolm', 'Gladwell')],
+            'genres': ['Non-Fiction', 'Psychology']
+        },
+        {
+            'title': 'David and Goliath: Underdogs, Misfits, and the Art of Battling Giants',
+            'isbn': '978-0-316-20436-1',
+            'authors': [('Malcolm', 'Gladwell')],
+            'genres': ['Non-Fiction', 'Psychology']
+        },
+        {
+            'title': 'The Black Swan: The Impact of the Highly Improbable',
+            'isbn': '978-0-8129-7381-5',
+            'authors': [('Nassim Nicholas', 'Taleb')],
+            'genres': ['Non-Fiction', 'Philosophy']
+        },
+        {
+            'title': 'Antifragile: Things That Gain from Disorder',
+            'isbn': '978-0-8129-7968-8',
+            'authors': [('Nassim Nicholas', 'Taleb')],
+            'genres': ['Non-Fiction', 'Philosophy']
+        },
+        {
+            'title': 'Fooled by Randomness: The Hidden Role of Chance in Life and in the Markets',
+            'isbn': '978-0-8129-7521-5',
+            'authors': [('Nassim Nicholas', 'Taleb')],
+            'genres': ['Non-Fiction', 'Philosophy']
+        },
+        {
+            'title': 'The Signal and the Noise: Why So Many Predictions Fail--but Some Don\'t',
+            'isbn': '978-0-14-312505-1',
+            'authors': [('Nate', 'Silver')],
+            'genres': ['Non-Fiction', 'Statistics']
+        },
+        {
+            'title': 'Moneyball: The Art of Winning an Unfair Game',
+            'isbn': '978-0-393-32481-5',
+            'authors': [('Michael', 'Lewis')],
+            'genres': ['Non-Fiction', 'Sports']
+        },
+        {
+            'title': 'The Big Short: Inside the Doomsday Machine',
+            'isbn': '978-0-393-33882-9',
+            'authors': [('Michael', 'Lewis')],
+            'genres': ['Non-Fiction', 'Finance']
+        },
+        {
+            'title': 'Liar\'s Poker',
+            'isbn': '978-0-393-33869-0',
+            'authors': [('Michael', 'Lewis')],
+            'genres': ['Non-Fiction', 'Finance']
+        },
+        {
+            'title': 'Flash Boys: A Wall Street Revolt',
+            'isbn': '978-0-393-24466-3',
+            'authors': [('Michael', 'Lewis')],
+            'genres': ['Non-Fiction', 'Finance']
+        },
+        {
+            'title': 'The Undoing Project: A Friendship That Changed Our Minds',
+            'isbn': '978-0-393-25459-4',
+            'authors': [('Michael', 'Lewis')],
+            'genres': ['Non-Fiction', 'Psychology']
         }
     ]
 
