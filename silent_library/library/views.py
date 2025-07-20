@@ -424,3 +424,16 @@ def return_book(request, loan_id):
     else:
         messages.error(request, "This book has already been returned.")
     return redirect('dashboard')
+
+
+import logging
+from django.contrib.auth import views as auth_views
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
+
+class CustomLoginView(auth_views.LoginView):
+    def form_valid(self, form):
+        # Log successful login attempts
+        logger.info(f"User '{form.cleaned_data.get('username')}' logged in successfully.")
+        return super().form_valid(form)
