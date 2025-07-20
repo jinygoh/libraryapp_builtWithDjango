@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'a-secret-key')
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -79,9 +79,9 @@ WSGI_APPLICATION = "silent_library.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": os.getenv('DB_NAME', 'silent_library'),
-        "USER": 'testuser',  # Replace with your MySQL username
-        "PASSWORD": os.getenv('DB_PASSWORD', 'password'),  # Replace with your MySQL password
+        "NAME": os.getenv('DB_NAME'),
+        "USER": os.getenv('DB_USER'),  # Replace with your MySQL username
+        "PASSWORD": os.getenv('DB_PASSWORD'),  # Replace with your MySQL password
         "HOST": "localhost",  # Or your MySQL host
         "PORT": "3306",  # Or your MySQL port
     }
@@ -130,6 +130,10 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "library.User"
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'dashboard'
+LOGOUT_REDIRECT_URL = 'home'
 
 ############################ Email Configuration ############################
 # Email server configuration
