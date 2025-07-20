@@ -152,6 +152,7 @@ def book_detail(request, book_id):
             review.book = book
             review.user = request.user
             review.save()
+            messages.success(request, "Your review has been submitted successfully.")
             return redirect('book_detail', book_id=book.pk)
     else:
         form = ReviewForm()
