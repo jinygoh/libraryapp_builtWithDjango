@@ -5,7 +5,7 @@ from django.db import migrations
 from faker import Faker
 
 def add_all_data(apps, schema_editor):
-    User = apps.get_model('auth', 'User')
+    User = apps.get_model('library', 'User')
     Book = apps.get_model('library', 'Book')
     Author = apps.get_model('library', 'Author')
     Genre = apps.get_model('library', 'Genre')
