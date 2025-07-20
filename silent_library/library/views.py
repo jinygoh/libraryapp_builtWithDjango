@@ -58,6 +58,9 @@ def login_view(request):
             password = form.cleaned_data.get('password')
             user = authenticate(username=username, password=password)
             if user is not None:
+                if user.is_blocked:
+                    messages.error(request, 'This account has been blocked.')
+                    return redirect('login')
                 login(request, user)
                 if user.is_staff:
                     return redirect('admin_dashboard')
@@ -362,6 +365,25 @@ def edit_book(request, book_id):
     return render(request, 'library/book_form.html', {'form': form})
 
 @user_passes_test(is_staff_user, login_url=reverse_lazy('login'))
+def admin_users(request):
+    users = User.objects.all()
+    return render(request, 'library/staff_users.html', {'users': users})
+
+@user_passes_test(is_staff_user, login_url=reverse_lazy('login'))
+def block_user(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    user.is_blocked = True
+    user.save()
+    return redirect('admin_users')
+
+@user_passes_test(is_staff_user, login_url=reverse_lazy('login'))
+def unblock_user(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    user.is_blocked = False
+    user.save()
+    return redirect('admin_users')
+
+@user_passes_test(is_staff_user, login_url=reverse_lazy('login'))
 def delete_book(request, book_id):
     book = get_object_or_404(Book, pk=book_id)
     if request.method == 'POST':
@@ -376,6 +398,9 @@ from datetime import timedelta
 @login_required
 def borrow_book(request, book_id):
     book = get_object_or_404(Book, pk=book_id)
+    if request.user.is_blocked:
+        messages.error(request, "Your account is blocked. You are not allowed to borrow books.")
+        return redirect('book_detail', book_id=book.pk)
     if book.available_copies > 0:
         due_date = timezone.now().date() + timedelta(days=14)
         loan = Loan.objects.create(user=request.user, book=book, due_date=due_date)

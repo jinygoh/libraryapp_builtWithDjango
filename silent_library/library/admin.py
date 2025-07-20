@@ -32,9 +32,18 @@ class GenreAdmin(admin.ModelAdmin):
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff')
+    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'is_blocked')
     search_fields = ('username', 'email', 'first_name', 'last_name')
-    list_filter = ('is_staff',)
+    list_filter = ('is_staff', 'is_blocked')
+    actions = ['block_users', 'unblock_users']
+
+    def block_users(self, request, queryset):
+        queryset.update(is_blocked=True)
+    block_users.short_description = "Block selected users"
+
+    def unblock_users(self, request, queryset):
+        queryset.update(is_blocked=False)
+    unblock_users.short_description = "Unblock selected users"
 
 @admin.register(Loan)
 class LoanAdmin(admin.ModelAdmin):

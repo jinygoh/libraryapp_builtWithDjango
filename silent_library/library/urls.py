@@ -21,6 +21,9 @@ urlpatterns = [
 
     # Staff URLs
     path('staff/', views.admin_dashboard, name='admin_dashboard'),
+    path('staff/users/', views.admin_users, name='admin_users'),
+    path('staff/users/block/<int:user_id>/', views.block_user, name='block_user'),
+    path('staff/users/unblock/<int:user_id>/', views.unblock_user, name='unblock_user'),
     path('staff/books/', views.admin_books, name='admin_books'),
     path('staff/books/add/', views.add_book, name='add_book'),
     path('staff/books/edit/<int:book_id>/', views.edit_book, name='edit_book'),

@@ -96,6 +96,7 @@ class User(AbstractUser):
     # The old Login model's last_login_timestamp is `last_login` in AbstractUser.
     # The old Login model's registration_date is `date_joined` in AbstractUser.
     date_of_birth = models.DateField(null=True, blank=True, db_index=True)
+    is_blocked = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'users'
