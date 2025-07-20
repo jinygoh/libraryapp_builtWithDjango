@@ -47,11 +47,18 @@
                 <div class="card-body">
                     <h5 class="card-title">My Reviews & Ratings</h5>
                     <p class="card-text">See the reviews and ratings you've given to books.</p>
-                    {# Placeholder for reviews - to be implemented #}
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item">You have not reviewed any books yet (Feature coming soon).</li>
+                        {% for review in reviews %}
+                            <li class="list-group-item">
+                                <strong>{{ review.book.title }}</strong>
+                                <br>
+                                <small class="text-muted">Rating: {{ review.rating }}/5</small>
+                                <p>{{ review.review_text }}</p>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item">You have not reviewed any books yet.</li>
+                        {% endfor %}
                     </ul>
-                    <a href="#" class="btn btn-outline-primary mt-3 disabled">View My Reviews</a>
                 </div>
             </div>
         </div>

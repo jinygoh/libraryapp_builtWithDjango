@@ -76,7 +76,8 @@ def logout_view(request):
 @login_required
 def dashboard(request):
     loans = Loan.objects.filter(user=request.user)
-    return render(request, 'library/dashboard.html', {'loans': loans})
+    reviews = Review.objects.filter(user=request.user)
+    return render(request, 'library/dashboard.html', {'loans': loans, 'reviews': reviews})
 
 from .forms import UserRegistrationForm, UserLoginForm, UserEditForm, UserEditUsernameEmailForm, UserEditPasswordForm, BookForm, ReviewForm
 
