@@ -19,11 +19,11 @@ urlpatterns = [
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='library/password_reset_confirm.html'), name='password_reset_confirm'),
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='library/password_reset_complete.html'), name='password_reset_complete'),
 
-    # Admin URLs
-    path('admin/', views.admin_dashboard, name='admin_dashboard'),
-    path('admin/books/', views.admin_books, name='admin_books'),
-    path('admin/books/add/', views.add_book, name='add_book'),
-    path('admin/books/edit/<int:book_id>/', views.edit_book, name='edit_book'),
-    path('admin/books/delete/<int:book_id>/', views.delete_book, name='delete_book'),
-    path('admin/send_overdue_emails/', views.bulk_email_overdue_borrowers, name='send_overdue_emails'),
+    # Staff URLs
+    path('staff/', views.admin_dashboard, name='admin_dashboard'),
+    path('staff/books/', views.admin_books, name='admin_books'),
+    path('staff/books/add/', views.add_book, name='add_book'),
+    path('staff/books/edit/<int:book_id>/', views.edit_book, name='edit_book'),
+    path('staff/books/delete/<int:book_id>/', views.delete_book, name='delete_book'),
+    path('staff/send_overdue_emails/', views.bulk_email_overdue_borrowers, name='send_overdue_emails'),
 ]

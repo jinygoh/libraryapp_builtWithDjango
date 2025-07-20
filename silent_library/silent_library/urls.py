@@ -19,6 +19,6 @@ from django.contrib import admin
 from django.urls import path, include # Import include
 
 urlpatterns = [
-    path("admin_builtin/", admin.site.urls), # Renamed to avoid conflict if we have custom admin path
+    path("admin/", admin.site.urls),
     path("", include("library.urls")), # Include library urls
 ]

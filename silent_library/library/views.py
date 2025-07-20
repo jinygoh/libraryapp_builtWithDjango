@@ -10,7 +10,7 @@ from django.db.models import Q
 from django.conf import settings
 
 
-def is_admin(user):
+def is_staff_user(user):
     return user.is_staff
 
 def home(request):
@@ -145,7 +145,7 @@ def book_detail(request, book_id):
 from .models import Book, Author, Genre, Loan, Review, LoanStatus # Added LoanStatus
 from django.db.models import Q # Ensure Q is imported if not already for LoanStatus filtering
 
-@user_passes_test(is_admin, login_url=reverse_lazy('login'))
+@user_passes_test(is_staff_user, login_url=reverse_lazy('login'))
 def admin_dashboard(request):
     import datetime # For calculating overdue fines
     from django.utils import timezone # More robust for today's date if timezone awareness is needed
@@ -195,12 +195,12 @@ def admin_dashboard(request):
         'overdue_books_with_fines': overdue_books_with_fines,
         'today': today, # For display or reference in template if needed
     }
-    return render(request, 'library/admin_dashboard.html', context)
+    return render(request, 'library/staff_dashboard.html', context)
 
 
 from django.utils import timezone
 
-@user_passes_test(is_admin, login_url=reverse_lazy('login'))
+@user_passes_test(is_staff_user, login_url=reverse_lazy('login'))
 def bulk_email_overdue_borrowers(request):
     if request.method == 'POST':
         today = timezone.now().date()
@@ -283,12 +283,12 @@ def bulk_email_overdue_borrowers(request):
     return redirect('admin_dashboard')
 
 
-@user_passes_test(is_admin, login_url=reverse_lazy('login'))
+@user_passes_test(is_staff_user, login_url=reverse_lazy('login'))
 def admin_books(request):
     books = Book.objects.all()
-    return render(request, 'library/admin_books.html', {'books': books})
+    return render(request, 'library/staff_books.html', {'books': books})
 
-@user_passes_test(is_admin, login_url=reverse_lazy('login'))
+@user_passes_test(is_staff_user, login_url=reverse_lazy('login'))
 def add_book(request):
     if request.method == 'POST':
         form = BookForm(request.POST)
@@ -299,7 +299,7 @@ def add_book(request):
         form = BookForm()
     return render(request, 'library/book_form.html', {'form': form})
 
-@user_passes_test(is_admin, login_url=reverse_lazy('login'))
+@user_passes_test(is_staff_user, login_url=reverse_lazy('login'))
 def edit_book(request, book_id):
     book = get_object_or_404(Book, pk=book_id)
     if request.method == 'POST':
@@ -311,7 +311,7 @@ def edit_book(request, book_id):
         form = BookForm(instance=book)
     return render(request, 'library/book_form.html', {'form': form})
 
-@user_passes_test(is_admin, login_url=reverse_lazy('login'))
+@user_passes_test(is_staff_user, login_url=reverse_lazy('login'))
 def delete_book(request, book_id):
     book = get_object_or_404(Book, pk=book_id)
     if request.method == 'POST':

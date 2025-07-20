@@ -1,11 +1,11 @@
 {% extends 'library/base.html' %}
 
-{% block title %}Admin Dashboard - Silent Library{% endblock %}
+{% block title %}Staff Dashboard - Silent Library{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Admin Dashboard</h1>
+        <h1 class="h2">Staff Dashboard</h1>
         <div class="btn-toolbar mb-2 mb-md-0">
             <div class="btn-group me-2">
                 <a href="{% url 'admin_books' %}" class="btn btn-sm btn-outline-secondary">Manage Books</a>
@@ -18,7 +18,7 @@
         </div>
     </div>
 
-    <p class="fs-5">Welcome to the Admin Panel, {{ user.username }}.</p>
+    <p class="fs-5">Welcome to the Staff Panel, {{ user.username }}.</p>
 
     <div class="row mt-4">
         <div class="col-md-4 mb-3">
