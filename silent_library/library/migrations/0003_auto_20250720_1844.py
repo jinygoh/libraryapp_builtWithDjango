@@ -87,6 +87,78 @@ def add_book_data(apps, schema_editor):
             'available_copies': 3,
             'authors': [('George', 'Orwell')],
             'genres': ['Dystopian', 'Political Satire']
+        },
+        {
+            'title': 'The Hitchhiker\'s Guide to the Galaxy',
+            'isbn': '978-0-345-39180-3',
+            'total_copies': 5,
+            'available_copies': 5,
+            'authors': [('Douglas', 'Adams')],
+            'genres': ['Science Fiction', 'Comedy']
+        },
+        {
+            'title': 'Fahrenheit 451',
+            'isbn': '978-1-4516-7331-9',
+            'total_copies': 3,
+            'available_copies': 3,
+            'authors': [('Ray', 'Bradbury')],
+            'genres': ['Dystopian', 'Science Fiction']
+        },
+        {
+            'title': 'Brave New World',
+            'isbn': '978-0-06-085052-4',
+            'total_copies': 3,
+            'available_copies': 3,
+            'authors': [('Aldous', 'Huxley')],
+            'genres': ['Dystopian', 'Science Fiction']
+        },
+        {
+            'title': 'The Chronicles of Narnia',
+            'isbn': '978-0-06-623850-0',
+            'total_copies': 2,
+            'available_copies': 2,
+            'authors': [('C.S.', 'Lewis')],
+            'genres': ['Fantasy', 'Adventure']
+        },
+        {
+            'title': 'The Grapes of Wrath',
+            'isbn': '978-0-14-303943-3',
+            'total_copies': 2,
+            'available_copies': 2,
+            'authors': [('John', 'Steinbeck')],
+            'genres': ['Fiction', 'Classic']
+        },
+        {
+            'title': 'Moby Dick',
+            'isbn': '978-1-5032-8078-6',
+            'total_copies': 1,
+            'available_copies': 1,
+            'authors': [('Herman', 'Melville')],
+            'genres': ['Fiction', 'Adventure']
+        },
+        {
+            'title': 'War and Peace',
+            'isbn': '978-1-4000-7998-8',
+            'total_copies': 1,
+            'available_copies': 1,
+            'authors': [('Leo', 'Tolstoy')],
+            'genres': ['Historical Fiction', 'Classic']
+        },
+        {
+            'title': 'The Odyssey',
+            'isbn': '978-0-14-026886-7',
+            'total_copies': 2,
+            'available_copies': 2,
+            'authors': [('Homer', '')],
+            'genres': ['Epic', 'Classic']
+        },
+        {
+            'title': 'The Divine Comedy',
+            'isbn': '978-0-14-243722-3',
+            'total_copies': 1,
+            'available_copies': 1,
+            'authors': [('Dante', 'Alighieri')],
+            'genres': ['Epic', 'Classic']
         }
     ]
 
