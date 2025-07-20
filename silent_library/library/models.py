@@ -33,6 +33,7 @@ class Book(models.Model):
     isbn = models.CharField(max_length=17, unique=True)
     total_copies = models.PositiveIntegerField(default=1, db_index=True)
     available_copies = models.PositiveIntegerField(default=1, db_index=True)
+    image = models.ImageField(upload_to='book_images/', blank=True, null=True)
 
     # Many-to-many relationships will be defined later using through models
     authors = models.ManyToManyField(Author, through='BookAuthor')

@@ -11,6 +11,9 @@
                     <h2 class="mb-0">{{ book.title }}</h2>
                 </div>
                 <div class="card-body">
+                    {% if book.image %}
+                        <img src="{{ book.image.url }}" class="img-fluid rounded mx-auto d-block mb-3" alt="{{ book.title }}">
+                    {% endif %}
                     <h4 class="card-subtitle mb-2 text-muted">By {{ book.authors.all|join:", " }}</h4>
                     
                     <dl class="row mt-3">
