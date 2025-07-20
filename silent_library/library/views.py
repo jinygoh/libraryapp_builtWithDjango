@@ -296,9 +296,21 @@ def admin_books(request):
 @user_passes_test(is_staff_user, login_url=reverse_lazy('login'))
 def add_book(request):
     if request.method == 'POST':
-        form = BookForm(request.POST)
+        form = BookForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            book = form.save(commit=False)
+            book.save()
+
+            author_first_name = form.cleaned_data['author_first_name']
+            author_last_name = form.cleaned_data['author_last_name']
+            author, created = Author.objects.get_or_create(first_name=author_first_name, last_name=author_last_name)
+            book.authors.add(author)
+
+            for i in range(1, 4):
+                genre = form.cleaned_data.get(f'genre{i}')
+                if genre:
+                    book.genres.add(genre)
+
             return redirect('admin_books')
     else:
         form = BookForm()
@@ -308,12 +320,34 @@ def add_book(request):
 def edit_book(request, book_id):
     book = get_object_or_404(Book, pk=book_id)
     if request.method == 'POST':
-        form = BookForm(request.POST, instance=book)
+        form = BookForm(request.POST, request.FILES, instance=book)
         if form.is_valid():
-            form.save()
+            book = form.save(commit=False)
+            book.save()
+
+            author_first_name = form.cleaned_data['author_first_name']
+            author_last_name = form.cleaned_data['author_last_name']
+            author, created = Author.objects.get_or_create(first_name=author_first_name, last_name=author_last_name)
+            book.authors.set([author])
+
+            book.genres.clear()
+            for i in range(1, 4):
+                genre = form.cleaned_data.get(f'genre{i}')
+                if genre:
+                    book.genres.add(genre)
+
             return redirect('admin_books')
     else:
-        form = BookForm(instance=book)
+        author = book.authors.first()
+        initial_data = {
+            'author_first_name': author.first_name if author else '',
+            'author_last_name': author.last_name if author else '',
+        }
+        genres = book.genres.all()
+        for i, genre in enumerate(genres[:3]):
+            initial_data[f'genre{i+1}'] = genre
+
+        form = BookForm(instance=book, initial=initial_data)
     return render(request, 'library/book_form.html', {'form': form})
 
 @user_passes_test(is_staff_user, login_url=reverse_lazy('login'))

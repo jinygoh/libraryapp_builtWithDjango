@@ -116,10 +116,18 @@ class UserEditPasswordForm(forms.Form):
         return self.user
 
 
+from .models import Genre
+
 class BookForm(forms.ModelForm):
+    author_first_name = forms.CharField(max_length=50)
+    author_last_name = forms.CharField(max_length=50)
+    genre1 = forms.ModelChoiceField(queryset=Genre.objects.all(), required=False)
+    genre2 = forms.ModelChoiceField(queryset=Genre.objects.all(), required=False)
+    genre3 = forms.ModelChoiceField(queryset=Genre.objects.all(), required=False)
+
     class Meta:
         model = Book
-        fields = '__all__'
+        exclude = ('authors', 'genres')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
