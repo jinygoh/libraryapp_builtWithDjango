@@ -7,28 +7,266 @@ def add_book_data(apps, schema_editor):
     Book = apps.get_model('library', 'Book')
     Author = apps.get_model('library', 'Author')
     Genre = apps.get_model('library', 'Genre')
-    Faker = apps.get_model('faker', 'Faker')
-    fake = Faker()
 
-    for _ in range(100):
+    books_data = [
+        {
+            'title': 'The Hobbit',
+            'isbn': '978-0-345-33968-3',
+            'authors': [('J.R.R.', 'Tolkien')],
+            'genres': ['Fantasy', 'Adventure']
+        },
+        {
+            'title': 'The Lord of the Rings',
+            'isbn': '978-0-618-64015-7',
+            'authors': [('J.R.R.', 'Tolkien')],
+            'genres': ['Fantasy', 'Adventure']
+        },
+        {
+            'title': 'The Catcher in the Rye',
+            'isbn': '978-0-316-76948-0',
+            'authors': [('J.D.', 'Salinger')],
+            'genres': ['Fiction', 'Classic']
+        },
+        {
+            'title': 'To Kill a Mockingbird',
+            'isbn': '978-0-06-112008-4',
+            'authors': [('Harper', 'Lee')],
+            'genres': ['Fiction', 'Classic']
+        },
+        {
+            'title': '1984',
+            'isbn': '978-0-452-28423-4',
+            'authors': [('George', 'Orwell')],
+            'genres': ['Dystopian', 'Science Fiction']
+        },
+        {
+            'title': 'The Great Gatsby',
+            'isbn': '978-0-7432-7356-5',
+            'authors': [('F. Scott', 'Fitzgerald')],
+            'genres': ['Fiction', 'Classic']
+        },
+        {
+            'title': 'Pride and Prejudice',
+            'isbn': '978-0-141-43951-8',
+            'authors': [('Jane', 'Austen')],
+            'genres': ['Romance', 'Classic']
+        },
+        {
+            'title': 'The Diary of a Young Girl',
+            'isbn': '978-0-553-29698-3',
+            'authors': [('Anne', 'Frank')],
+            'genres': ['Non-Fiction', 'Biography']
+        },
+        {
+            'title': 'The Book Thief',
+            'isbn': '978-0-375-84220-9',
+            'authors': [('Markus', 'Zusak')],
+            'genres': ['Historical Fiction', 'Young Adult']
+        },
+        {
+            'title': 'Animal Farm',
+            'isbn': '978-0-452-28424-1',
+            'authors': [('George', 'Orwell')],
+            'genres': ['Dystopian', 'Political Satire']
+        },
+        {
+            'title': 'The Hitchhiker\'s Guide to the Galaxy',
+            'isbn': '978-0-345-39180-3',
+            'authors': [('Douglas', 'Adams')],
+            'genres': ['Science Fiction', 'Comedy']
+        },
+        {
+            'title': 'Fahrenheit 451',
+            'isbn': '978-1-4516-7331-9',
+            'authors': [('Ray', 'Bradbury')],
+            'genres': ['Dystopian', 'Science Fiction']
+        },
+        {
+            'title': 'Brave New World',
+            'isbn': '978-0-06-085052-4',
+            'authors': [('Aldous', 'Huxley')],
+            'genres': ['Dystopian', 'Science Fiction']
+        },
+        {
+            'title': 'The Chronicles of Narnia',
+            'isbn': '978-0-06-623850-0',
+            'authors': [('C.S.', 'Lewis')],
+            'genres': ['Fantasy', 'Adventure']
+        },
+        {
+            'title': 'The Grapes of Wrath',
+            'isbn': '978-0-14-303943-3',
+            'authors': [('John', 'Steinbeck')],
+            'genres': ['Fiction', 'Classic']
+        },
+        {
+            'title': 'Moby Dick',
+            'isbn': '978-1-5032-8078-6',
+            'authors': [('Herman', 'Melville')],
+            'genres': ['Fiction', 'Adventure']
+        },
+        {
+            'title': 'War and Peace',
+            'isbn': '978-1-4000-7998-8',
+            'authors': [('Leo', 'Tolstoy')],
+            'genres': ['Historical Fiction', 'Classic']
+        },
+        {
+            'title': 'The Odyssey',
+            'isbn': '978-0-14-026886-7',
+            'authors': [('Homer', '')],
+            'genres': ['Epic', 'Classic']
+        },
+        {
+            'title': 'The Divine Comedy',
+            'isbn': '978-0-14-243722-3',
+            'authors': [('Dante', 'Alighieri')],
+            'genres': ['Epic', 'Classic']
+        },
+        {
+            'title': 'The Alchemist',
+            'isbn': '978-0-06-112241-5',
+            'authors': [('Paulo', 'Coelho')],
+            'genres': ['Fantasy', 'Adventure']
+        },
+        {
+            'title': 'The Little Prince',
+            'isbn': '978-0-15-601219-5',
+            'authors': [('Antoine', 'de Saint-Exupéry')],
+            'genres': ['Fantasy', 'Classic']
+        },
+        {
+            'title': 'The Hunger Games',
+            'isbn': '978-0-439-02352-8',
+            'authors': [('Suzanne', 'Collins')],
+            'genres': ['Dystopian', 'Young Adult']
+        },
+        {
+            'title': 'Harry Potter and the Sorcerer\'s Stone',
+            'isbn': '978-0-590-35342-7',
+            'authors': [('J.K.', 'Rowling')],
+            'genres': ['Fantasy', 'Young Adult']
+        },
+        {
+            'title': 'The Da Vinci Code',
+            'isbn': '978-0-385-50420-1',
+            'authors': [('Dan', 'Brown')],
+            'genres': ['Mystery', 'Thriller']
+        },
+        {
+            'title': 'The Girl with the Dragon Tattoo',
+            'isbn': '978-0-307-47347-9',
+            'authors': [('Stieg', 'Larsson')],
+            'genres': ['Mystery', 'Thriller']
+        },
+        {
+            'title': 'Gone Girl',
+            'isbn': '978-0-307-58837-1',
+            'authors': [('Gillian', 'Flynn')],
+            'genres': ['Mystery', 'Thriller']
+        },
+        {
+            'title': 'The Martian',
+            'isbn': '978-0-8041-3902-1',
+            'authors': [('Andy', 'Weir')],
+            'genres': ['Science Fiction']
+        },
+        {
+            'title': 'Ready Player One',
+            'isbn': '978-0-307-88743-6',
+            'authors': [('Ernest', 'Cline')],
+            'genres': ['Science Fiction', 'Dystopian']
+        },
+        {
+            'title': 'The Road',
+            'isbn': '978-0-307-38789-9',
+            'authors': [('Cormac', 'McCarthy')],
+            'genres': ['Dystopian', 'Fiction']
+        },
+        {
+            'title': 'The Stand',
+            'isbn': '978-0-385-19957-5',
+            'authors': [('Stephen', 'King')],
+            'genres': ['Horror', 'Fantasy']
+        },
+        {
+            'title': 'It',
+            'isbn': '978-1-5011-4297-0',
+            'authors': [('Stephen', 'King')],
+            'genres': ['Horror', 'Fantasy']
+        },
+        {
+            'title': 'The Shining',
+            'isbn': '978-0-385-12167-5',
+            'authors': [('Stephen', 'King')],
+            'genres': ['Horror', 'Thriller']
+        },
+        {
+            'title': 'Dune',
+            'isbn': '978-0-441-01359-3',
+            'authors': [('Frank', 'Herbert')],
+            'genres': ['Science Fiction']
+        },
+        {
+            'title': 'Ender\'s Game',
+            'isbn': '978-0-8125-5070-2',
+            'authors': [('Orson Scott', 'Card')],
+            'genres': ['Science Fiction']
+        },
+        {
+            'title': 'The Name of the Wind',
+            'isbn': '978-0-7564-0474-1',
+            'authors': [('Patrick', 'Rothfuss')],
+            'genres': ['Fantasy']
+        },
+        {
+            'title': 'A Game of Thrones',
+            'isbn': '978-0-553-38168-9',
+            'authors': [('George R.R.', 'Martin')],
+            'genres': ['Fantasy']
+        },
+        {
+            'title': 'The Way of Kings',
+            'isbn': '978-0-7653-2635-5',
+            'authors': [('Brandon', 'Sanderson')],
+            'genres': ['Fantasy']
+        },
+        {
+            'title': 'Mistborn: The Final Empire',
+            'isbn': '978-0-7653-1178-8',
+            'authors': [('Brandon', 'Sanderson')],
+            'genres': ['Fantasy']
+        },
+        {
+            'title': 'The Eye of the World',
+            'isbn': '978-0-8125-1181-9',
+            'authors': [('Robert', 'Jordan')],
+            'genres': ['Fantasy']
+        },
+        {
+            'title': 'The Colour of Magic',
+            'isbn': '978-0-552-12475-1',
+            'authors': [('Terry', 'Pratchett')],
+            'genres': ['Fantasy', 'Comedy']
+        }
+    ]
+
+    for book_data in books_data:
         total_copies = random.randint(1, 10)
         available_copies = random.randint(0, total_copies)
         book = Book.objects.create(
-            title=fake.catch_phrase(),
-            isbn=fake.isbn13(),
+            title=book_data['title'],
+            isbn=book_data['isbn'],
             total_copies=total_copies,
             available_copies=available_copies
         )
 
-        for _ in range(random.randint(1, 2)):
-            author = Author.objects.create(
-                first_name=fake.first_name(),
-                last_name=fake.last_name()
-            )
+        for first_name, last_name in book_data['authors']:
+            author, created = Author.objects.get_or_create(first_name=first_name, last_name=last_name)
             book.authors.add(author)
 
-        for _ in range(random.randint(1, 3)):
-            genre = Genre.objects.create(genre=fake.word())
+        for genre_name in book_data['genres']:
+            genre, created = Genre.objects.get_or_create(genre=genre_name)
             book.genres.add(genre)
 
 class Migration(migrations.Migration):
