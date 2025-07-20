@@ -119,10 +119,15 @@ def search_books(request):
     query = request.GET.get('q')
     books = Book.objects.all()
     if query:
+        # For author search, split query to handle full names
+        author_queries = Q()
+        for term in query.split():
+            author_queries |= Q(authors__first_name__icontains=term)
+            author_queries |= Q(authors__last_name__icontains=term)
+
         books = books.filter(
             Q(title__icontains=query) |
-            Q(authors__first_name__icontains=query) |
-            Q(authors__last_name__icontains=query) |
+            author_queries |
             Q(genres__genre__icontains=query)
         ).distinct()
     return render(request, 'library/search.html', {'books': books, 'query': query})
