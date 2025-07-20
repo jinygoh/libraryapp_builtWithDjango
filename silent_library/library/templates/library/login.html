@@ -13,9 +13,11 @@
 
                     {# Render non-field errors if any #}
                     {% if form.non_field_errors %}
-                        {% for error in form.non_field_errors %}
-                            <p class="mb-0" style="color: red;">{{ error }}</p>
-                        {% endfor %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                                <p class="mb-0">{{ error }}</p>
+                            {% endfor %}
+                        </div>
                     {% endif %}
                     
                     {% for field in form %}
