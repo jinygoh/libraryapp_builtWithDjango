@@ -21,9 +21,11 @@ class CharacterVarietyValidator:
 
 
 class UserRegistrationForm(UserCreationForm):
+    date_of_birth = forms.DateField(widget=forms.SelectDateWidget(years=range(1920, 2023)))
+
     class Meta(UserCreationForm.Meta):
         model = User
-        fields = ('username', 'email', 'first_name', 'last_name')
+        fields = ('username', 'email', 'first_name', 'last_name', 'date_of_birth')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
