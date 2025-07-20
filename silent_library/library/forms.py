@@ -136,6 +136,13 @@ class BookForm(forms.ModelForm):
 
 
 class ReviewForm(forms.ModelForm):
+    rating = forms.ChoiceField(choices=[(i, i) for i in range(0, 6)])
+
     class Meta:
         model = Review
         fields = ['review_text', 'rating']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'

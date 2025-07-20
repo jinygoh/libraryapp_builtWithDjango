@@ -55,11 +55,23 @@
                     <div class="mt-5">
                         <h4>Reviews & Ratings</h4>
                         {% if user.is_authenticated %}
-                            <form method="post">
-                                {% csrf_token %}
-                                {{ form.as_p }}
-                                <button type="submit" class="btn btn-primary">Submit Review</button>
-                            </form>
+                            <div class="card my-4">
+                                <h5 class="card-header">Leave a Review</h5>
+                                <div class="card-body">
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        <div class="mb-3">
+                                            <label for="id_rating" class="form-label">Rating</label>
+                                            {{ form.rating }}
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="id_review_text" class="form-label">Review</label>
+                                            {{ form.review_text }}
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Submit Review</button>
+                                    </form>
+                                </div>
+                            </div>
                         {% else %}
                             <p><a href="{% url 'login' %}">Login</a> to write a review.</p>
                         {% endif %}
