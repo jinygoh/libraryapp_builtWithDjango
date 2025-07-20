@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.core.mail import send_mail, send_mass_mail
-from .models import Book, Author, Genre, Loan, Review
+from .models import Book, Author, Genre, Loan, Review, User
 from .forms import UserRegistrationForm, UserLoginForm, UserEditForm, BookForm, ReviewForm
 from django.db.models import Q
 from django.conf import settings
