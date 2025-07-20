@@ -18,7 +18,7 @@ def add_all_data(apps, schema_editor):
 
     # Create users
     users = []
-    for _ in range(10):
+    for _ in range(100):
         user = User.objects.create_user(
             username=fake.user_name(),
             password='password123',
@@ -34,7 +34,7 @@ def add_all_data(apps, schema_editor):
 
     # Create loans
     loans = []
-    for _ in range(50):
+    for _ in range(100):
         loan = Loan.objects.create(
             user=random.choice(users),
             book=random.choice(books),
@@ -44,31 +44,28 @@ def add_all_data(apps, schema_editor):
         loans.append(loan)
 
     # Create fines
-    for loan in loans:
-        if loan.status == 'overdue':
-            Fine.objects.create(
-                loan=loan,
-                fine_amount=random.uniform(1.0, 20.0),
-                payment_status=random.choice(['pending', 'paid', 'waived'])
-            )
+    for _ in range(100):
+        Fine.objects.create(
+            loan=random.choice(loans),
+            fine_amount=random.uniform(1.0, 20.0),
+            payment_status=random.choice(['pending', 'paid', 'waived'])
+        )
 
     # Create notifications
-    for user in users:
-        for _ in range(random.randint(0, 5)):
-            Notification.objects.create(
-                user=user,
-                notification_text=fake.sentence()
-            )
+    for _ in range(100):
+        Notification.objects.create(
+            user=random.choice(users),
+            notification_text=fake.sentence()
+        )
 
     # Create reviews
-    for book in books:
-        for _ in range(random.randint(0, 3)):
-            Review.objects.create(
-                user=random.choice(users),
-                book=book,
-                rating=random.randint(1, 5),
-                review_text=fake.paragraph()
-            )
+    for _ in range(100):
+        Review.objects.create(
+            user=random.choice(users),
+            book=random.choice(books),
+            rating=random.randint(1, 5),
+            review_text=fake.paragraph()
+        )
 
 class Migration(migrations.Migration):
 
