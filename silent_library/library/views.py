@@ -361,11 +361,14 @@ def delete_book(request, book_id):
         return redirect('admin_books')
     return render(request, 'library/book_confirm_delete.html', {'book': book})
 
+from datetime import timedelta
+
 @login_required
 def borrow_book(request, book_id):
     book = get_object_or_404(Book, pk=book_id)
     if book.available_copies > 0:
-        loan = Loan.objects.create(user=request.user, book=book)
+        due_date = timezone.now().date() + timedelta(days=14)
+        loan = Loan.objects.create(user=request.user, book=book, due_date=due_date)
         book.available_copies -= 1
         book.save()
         messages.success(request, f"You have successfully borrowed '{book.title}'.")
