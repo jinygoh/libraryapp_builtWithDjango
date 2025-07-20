@@ -26,4 +26,6 @@ urlpatterns = [
     path('staff/books/edit/<int:book_id>/', views.edit_book, name='edit_book'),
     path('staff/books/delete/<int:book_id>/', views.delete_book, name='delete_book'),
     path('staff/send_overdue_emails/', views.bulk_email_overdue_borrowers, name='send_overdue_emails'),
+    path('book/<int:book_id>/borrow/', views.borrow_book, name='borrow_book'),
+    path('loan/<int:loan_id>/return/', views.return_book, name='return_book'),
 ]

@@ -359,3 +359,29 @@ def delete_book(request, book_id):
         book.delete()
         return redirect('admin_books')
     return render(request, 'library/book_confirm_delete.html', {'book': book})
+
+@login_required
+def borrow_book(request, book_id):
+    book = get_object_or_404(Book, pk=book_id)
+    if book.available_copies > 0:
+        loan = Loan.objects.create(user=request.user, book=book)
+        book.available_copies -= 1
+        book.save()
+        messages.success(request, f"You have successfully borrowed '{book.title}'.")
+    else:
+        messages.error(request, "This book is not available for borrowing.")
+    return redirect('book_detail', book_id=book.pk)
+
+@login_required
+def return_book(request, loan_id):
+    loan = get_object_or_404(Loan, pk=loan_id, user=request.user)
+    if loan.status == 'borrowed':
+        loan.status = 'returned'
+        loan.return_date = timezone.now().date()
+        loan.save()
+        loan.book.available_copies += 1
+        loan.book.save()
+        messages.success(request, f"You have successfully returned '{loan.book.title}'.")
+    else:
+        messages.error(request, "This book has already been returned.")
+    return redirect('dashboard')

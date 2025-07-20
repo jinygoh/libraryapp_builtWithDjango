@@ -23,11 +23,22 @@
                 <div class="card-body">
                     <h5 class="card-title">My Borrowed Books</h5>
                     <p class="card-text">View the books you currently have on loan and their due dates.</p>
-                    {# Placeholder for borrowed books list - to be implemented with actual data #}
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item">No books currently borrowed (Feature coming soon).</li>
+                        {% for loan in loans %}
+                            {% if loan.status == 'borrowed' %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>{{ loan.book.title }}</strong> by {{ loan.book.authors.all|join:", " }}
+                                        <br>
+                                        <small class="text-muted">Due: {{ loan.due_date|date:"Y-m-d" }}</small>
+                                    </div>
+                                    <a href="{% url 'return_book' loan.id %}" class="btn btn-warning btn-sm">Return</a>
+                                </li>
+                            {% endif %}
+                        {% empty %}
+                            <li class="list-group-item">No books currently borrowed.</li>
+                        {% endfor %}
                     </ul>
-                    <a href="#" class="btn btn-outline-primary mt-3 disabled">View Borrowing History</a>
                 </div>
             </div>
         </div>
