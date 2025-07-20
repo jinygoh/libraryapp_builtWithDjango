@@ -54,7 +54,7 @@
 
                     <div class="mt-5">
                         <h4>Reviews & Ratings</h4>
-                        {% if user.is_authenticated %}
+                        {% if user.is_authenticated and has_borrowed %}
                             <div class="card my-4">
                                 <h5 class="card-header">Leave a Review</h5>
                                 <div class="card-body">
@@ -72,6 +72,8 @@
                                     </form>
                                 </div>
                             </div>
+                        {% elif user.is_authenticated %}
+                            <p>You must borrow this book to write a review.</p>
                         {% else %}
                             <p><a href="{% url 'login' %}">Login</a> to write a review.</p>
                         {% endif %}

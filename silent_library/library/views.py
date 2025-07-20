@@ -138,7 +138,14 @@ def search_books(request):
 def book_detail(request, book_id):
     book = get_object_or_404(Book, pk=book_id)
     reviews = Review.objects.filter(book=book)
+    has_borrowed = False
+    if request.user.is_authenticated:
+        has_borrowed = Loan.objects.filter(book=book, user=request.user).exists()
+
     if request.method == 'POST':
+        if not has_borrowed:
+            messages.error(request, "You can only review books you have borrowed.")
+            return redirect('book_detail', book_id=book.pk)
         form = ReviewForm(request.POST)
         if form.is_valid():
             review = form.save(commit=False)
@@ -148,7 +155,7 @@ def book_detail(request, book_id):
             return redirect('book_detail', book_id=book.pk)
     else:
         form = ReviewForm()
-    return render(request, 'library/book_detail.html', {'book': book, 'reviews': reviews, 'form': form})
+    return render(request, 'library/book_detail.html', {'book': book, 'reviews': reviews, 'form': form, 'has_borrowed': has_borrowed})
 
 from .models import Book, Author, Genre, Loan, Review, LoanStatus # Added LoanStatus
 from django.db.models import Q # Ensure Q is imported if not already for LoanStatus filtering
