@@ -365,6 +365,8 @@ def edit_book(request, book_id):
 def delete_book(request, book_id):
     book = get_object_or_404(Book, pk=book_id)
     if request.method == 'POST':
+        book.authors.clear()
+        book.genres.clear()
         book.delete()
         return redirect('admin_books')
     return render(request, 'library/book_confirm_delete.html', {'book': book})
