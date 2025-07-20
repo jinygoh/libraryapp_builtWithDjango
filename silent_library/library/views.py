@@ -62,6 +62,8 @@ def login_view(request):
                 if user.is_staff:
                     return redirect('admin_dashboard')
                 return redirect('dashboard')
+            else:
+                messages.error(request, 'Invalid username or password.')
     else:
         form = UserLoginForm()
     return render(request, 'library/login.html', {'form': form})
