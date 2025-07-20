@@ -30,13 +30,15 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNavDropdown">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    {% if not user.is_staff %}
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="{% url 'home' %}">Home</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'search_books' %}">Search Books</a>
                     </li>
-                    {% if user.is_authenticated %}
+                    {% endif %}
+                    {% if user.is_authenticated and not user.is_staff %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
                         </li>
