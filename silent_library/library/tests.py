@@ -1,3 +1,6 @@
+# This file contains the tests for the 'library' app.
+# The tests are written using the Django testing framework.
+# This file is crucial for ensuring the quality and correctness of the application's code.
 from django.test import TestCase, RequestFactory
 from django.urls import reverse
 from django.contrib.auth import get_user_model
@@ -12,7 +15,14 @@ from unittest.mock import patch, MagicMock
 UserModel = get_user_model()
 
 class AdminDashboardViewTests(TestCase):
+    """
+    This class contains tests for the admin dashboard view.
+    """
     def setUp(self):
+        """
+        This method sets up the initial data for the tests.
+        It creates a staff user and a normal user, and logs in the staff user.
+        """
         self.staff_user = UserModel.objects.create_user(
             username='staffmember',
             email='staff@example.com',
@@ -28,12 +38,16 @@ class AdminDashboardViewTests(TestCase):
         self.client.login(username='staffmember', password='password123')
 
     def test_admin_dashboard_access_staff(self):
-        """ Test that staff users can access the admin dashboard. """
+        """
+        This test checks that staff users can access the admin dashboard.
+        """
         response = self.client.get(reverse('admin_dashboard'))
         self.assertEqual(response.status_code, 200)
 
     def test_admin_dashboard_redirect_non_staff(self):
-        """ Test that non-staff users are redirected from admin dashboard. """
+        """
+        This test checks that non-staff users are redirected from the admin dashboard.
+        """
         self.client.logout()
         self.client.login(username='normaluser', password='password123')
         response = self.client.get(reverse('admin_dashboard'))
@@ -42,7 +56,10 @@ class AdminDashboardViewTests(TestCase):
 
     @patch('library.views.Loan.objects.filter')
     def test_admin_dashboard_context_active_loans(self, mock_loan_filter):
-        """ Test that active_loans are correctly processed and passed to context. """
+        """
+        This test checks that the `active_loans` context variable is correctly processed and passed to the template.
+        It uses a mock `Loan.objects.filter` to isolate the view from the database.
+        """
         mock_book1 = MagicMock(spec=Book, title='Active Book 1')
         mock_user1 = MagicMock(spec=UserModel, username='borrower1')
         mock_loan1 = MagicMock(spec=Loan, book=mock_book1, user=mock_user1,
@@ -63,7 +80,10 @@ class AdminDashboardViewTests(TestCase):
 
     @patch('library.views.Loan.objects.filter')
     def test_admin_dashboard_context_overdue_books(self, mock_loan_filter):
-        """ Test that overdue_books_with_fines are correctly processed. """
+        """
+        This test checks that the `overdue_books_with_fines` context variable is correctly processed.
+        It uses a mock `Loan.objects.filter` to isolate the view from the database.
+        """
         today = timezone.now().date()
         mock_book_overdue = MagicMock(spec=Book, title='Overdue Book 1')
         mock_user_overdue = MagicMock(spec=UserModel, username='overdueborrower')
@@ -109,7 +129,14 @@ class AdminDashboardViewTests(TestCase):
 
 
 class BulkEmailOverdueBorrowersTests(TestCase):
+    """
+    This class contains tests for the bulk email overdue borrowers view.
+    """
     def setUp(self):
+        """
+        This method sets up the initial data for the tests.
+        It creates a staff user and logs them in.
+        """
         self.staff_user = UserModel.objects.create_user(
             username='staffmailer',
             email='staffmailer@example.com',
@@ -121,7 +148,10 @@ class BulkEmailOverdueBorrowersTests(TestCase):
     @patch('library.views.send_mass_mail')
     @patch('library.views.Loan.objects.filter')
     def test_bulk_email_sends_correct_emails(self, mock_loan_filter, mock_send_mass_mail):
-        """ Test that bulk email view attempts to send correct emails. """
+        """
+        This test checks that the bulk email view attempts to send the correct emails.
+        It uses mock objects to isolate the view from the database and the email sending functionality.
+        """
         today = timezone.now().date()
 
         mock_user1 = MagicMock(spec=UserModel, username='userone', email='userone@example.com', first_name='User')
@@ -172,6 +202,9 @@ class BulkEmailOverdueBorrowersTests(TestCase):
     @patch('library.views.send_mass_mail')
     @patch('library.views.Loan.objects.filter')
     def test_bulk_email_no_overdue_books(self, mock_loan_filter, mock_send_mass_mail):
+        """
+        This test checks that no emails are sent if there are no overdue books.
+        """
         mock_loan_filter.return_value.select_related.return_value = []
 
         response = self.client.post(reverse('send_overdue_emails'))
