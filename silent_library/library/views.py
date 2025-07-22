@@ -1,3 +1,6 @@
+# This file contains the view functions for the 'library' app.
+# Each view function is responsible for handling a specific HTTP request and returning an HTTP response.
+# The views are the business logic of the application.
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -11,12 +14,25 @@ from django.conf import settings
 
 
 def is_staff_user(user):
+    """
+    This function checks if a user is a staff member.
+    It is used by the 'user_passes_test' decorator to restrict access to certain views.
+    """
     return user.is_staff
 
 def home(request):
+    """
+    This view renders the home page of the library.
+    It does not require any authentication.
+    """
     return render(request, 'library/home.html')
 
 def register(request):
+    """
+    This view handles user registration.
+    If the request method is POST, it processes the registration form.
+    If the form is valid, it saves the user and sends a confirmation email.
+    """
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
@@ -48,9 +64,18 @@ def register(request):
     return render(request, 'library/register.html', {'form': form})
 
 def registration_complete(request):
+    """
+    This view renders the registration complete page.
+    It is shown to the user after they have successfully registered.
+    """
     return render(request, 'library/registration_complete.html')
 
 def login_view(request):
+    """
+    This view handles user login.
+    If the request method is POST, it processes the login form.
+    If the form is valid, it authenticates the user and logs them in.
+    """
     if request.method == 'POST':
         form = UserLoginForm(request.POST)
         if form.is_valid():
@@ -73,11 +98,19 @@ def login_view(request):
 
 @login_required
 def logout_view(request):
+    """
+    This view handles user logout.
+    It logs the user out and redirects them to the home page.
+    """
     logout(request)
     return redirect('home')
 
 @login_required
 def dashboard(request):
+    """
+    This view renders the user dashboard.
+    It shows the user's loans and reviews.
+    """
     loans = Loan.objects.filter(user=request.user)
     reviews = Review.objects.filter(user=request.user)
     return render(request, 'library/dashboard.html', {'loans': loans, 'reviews': reviews})
@@ -86,6 +119,10 @@ from .forms import UserRegistrationForm, UserLoginForm, UserEditForm, UserEditUs
 
 @login_required
 def profile(request):
+    """
+    This view handles user profile updates.
+    It allows the user to edit their profile information, username, email, and password.
+    """
     if 'edit_profile' in request.POST:
         form = UserEditForm(request.POST, instance=request.user)
         if form.is_valid():
@@ -122,6 +159,10 @@ def profile(request):
     })
 
 def search_books(request):
+    """
+    This view handles book searches.
+    It allows users to search for books by title, author, or genre.
+    """
     query = request.GET.get('q')
     books = Book.objects.all()
     if query:
@@ -139,6 +180,10 @@ def search_books(request):
     return render(request, 'library/search.html', {'books': books, 'query': query})
 
 def book_detail(request, book_id):
+    """
+    This view renders the detail page for a specific book.
+    It shows the book's details, reviews, and a form to submit a new review.
+    """
     book = get_object_or_404(Book, pk=book_id)
     reviews = Review.objects.filter(book=book)
     has_borrowed = False
@@ -166,6 +211,11 @@ from django.db.models import Q # Ensure Q is imported if not already for LoanSta
 
 @user_passes_test(is_staff_user, login_url=reverse_lazy('login'))
 def admin_dashboard(request):
+    """
+    This view renders the admin dashboard.
+    It shows active loans, overdue books, and fines.
+    This view is only accessible to staff members.
+    """
     import datetime # For calculating overdue fines
     from django.utils import timezone # More robust for today's date if timezone awareness is needed
     # Active Loans (already implemented)
@@ -221,6 +271,11 @@ from django.utils import timezone
 
 @user_passes_test(is_staff_user, login_url=reverse_lazy('login'))
 def bulk_email_overdue_borrowers(request):
+    """
+    This view sends bulk emails to users with overdue books.
+    It calculates the overdue days and fine amount for each book.
+    This view is only accessible to staff members.
+    """
     if request.method == 'POST':
         today = timezone.now().date()
 
@@ -304,11 +359,22 @@ def bulk_email_overdue_borrowers(request):
 
 @user_passes_test(is_staff_user, login_url=reverse_lazy('login'))
 def admin_books(request):
+    """
+    This view renders the admin page for managing books.
+    It shows a list of all books in the library.
+    This view is only accessible to staff members.
+    """
     books = Book.objects.all()
     return render(request, 'library/staff_books.html', {'books': books})
 
 @user_passes_test(is_staff_user, login_url=reverse_lazy('login'))
 def add_book(request):
+    """
+    This view handles adding a new book to the library.
+    If the request method is POST, it processes the book form.
+    If the form is valid, it saves the book and its author and genres.
+    This view is only accessible to staff members.
+    """
     if request.method == 'POST':
         form = BookForm(request.POST, request.FILES)
         if form.is_valid():
@@ -332,6 +398,12 @@ def add_book(request):
 
 @user_passes_test(is_staff_user, login_url=reverse_lazy('login'))
 def edit_book(request, book_id):
+    """
+    This view handles editing an existing book in the library.
+    If the request method is POST, it processes the book form.
+    If the form is valid, it saves the updated book information.
+    This view is only accessible to staff members.
+    """
     book = get_object_or_404(Book, pk=book_id)
     if request.method == 'POST':
         form = BookForm(request.POST, request.FILES, instance=book)
@@ -366,11 +438,21 @@ def edit_book(request, book_id):
 
 @user_passes_test(is_staff_user, login_url=reverse_lazy('login'))
 def admin_users(request):
+    """
+    This view renders the admin page for managing users.
+    It shows a list of all users in the library.
+    This view is only accessible to staff members.
+    """
     users = User.objects.all()
     return render(request, 'library/staff_users.html', {'users': users})
 
 @user_passes_test(is_staff_user, login_url=reverse_lazy('login'))
 def block_user(request, user_id):
+    """
+    This view handles blocking a user.
+    It sets the 'is_blocked' flag for the user to True.
+    This view is only accessible to staff members.
+    """
     user = get_object_or_404(User, pk=user_id)
     user.is_blocked = True
     user.save()
@@ -378,6 +460,11 @@ def block_user(request, user_id):
 
 @user_passes_test(is_staff_user, login_url=reverse_lazy('login'))
 def unblock_user(request, user_id):
+    """
+    This view handles unblocking a user.
+    It sets the 'is_blocked' flag for the user to False.
+    This view is only accessible to staff members.
+    """
     user = get_object_or_404(User, pk=user_id)
     user.is_blocked = False
     user.save()
@@ -385,6 +472,11 @@ def unblock_user(request, user_id):
 
 @user_passes_test(is_staff_user, login_url=reverse_lazy('login'))
 def delete_book(request, book_id):
+    """
+    This view handles deleting a book from the library.
+    If the request method is POST, it deletes the book and its associated data.
+    This view is only accessible to staff members.
+    """
     book = get_object_or_404(Book, pk=book_id)
     if request.method == 'POST':
         book.authors.clear()
@@ -397,6 +489,11 @@ from datetime import timedelta
 
 @login_required
 def borrow_book(request, book_id):
+    """
+    This view handles borrowing a book.
+    It creates a new loan record for the user and the book.
+    It also decrements the number of available copies of the book.
+    """
     book = get_object_or_404(Book, pk=book_id)
     if request.user.is_blocked:
         messages.error(request, "Your account is blocked. You are not allowed to borrow books.")
@@ -413,6 +510,11 @@ def borrow_book(request, book_id):
 
 @login_required
 def return_book(request, loan_id):
+    """
+    This view handles returning a book.
+    It updates the loan record to mark the book as returned.
+    It also increments the number of available copies of the book.
+    """
     loan = get_object_or_404(Loan, pk=loan_id, user=request.user)
     if loan.status == 'borrowed':
         loan.status = 'returned'
@@ -433,6 +535,10 @@ from django.contrib.auth import views as auth_views
 logger = logging.getLogger(__name__)
 
 class CustomLoginView(auth_views.LoginView):
+    """
+    This class is a custom login view that logs successful login attempts.
+    It inherits from the built-in Django LoginView.
+    """
     def form_valid(self, form):
         # Log successful login attempts
         logger.info(f"User '{form.cleaned_data.get('username')}' logged in successfully.")
