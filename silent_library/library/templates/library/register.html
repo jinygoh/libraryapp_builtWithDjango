@@ -1,7 +1,16 @@
+<!--
+This template extends the `base.html` template and provides the content for the user registration page.
+-->
 {% extends 'library/base.html' %}
 
+<!--
+This block overrides the `title` block in `base.html` to set a custom title for the registration page.
+-->
 {% block title %}Register - Silent Library{% endblock %}
 
+<!--
+This block overrides the `content` block in `base.html` to provide the main content for the registration page.
+-->
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
@@ -9,9 +18,16 @@
             <div class="card-body">
                 <h2 class="card-title text-center mb-4">Create Your Account</h2>
                 <form method="post" novalidate>
+                    <!--
+                    The `csrf_token` tag provides protection against Cross-Site Request Forgeries (CSRF).
+                    It is essential for any form that uses the POST method.
+                    -->
                     {% csrf_token %}
                     
-                    {# Render non-field errors if any #}
+                    <!--
+                    This block renders any non-field errors from the form.
+                    Non-field errors are errors that are not specific to a particular field (e.g., "Invalid login credentials").
+                    -->
                     {% if form.non_field_errors %}
                         <div class="alert alert-danger">
                             {% for error in form.non_field_errors %}
@@ -20,18 +36,31 @@
                         </div>
                     {% endif %}
 
-                    {# Loop through form fields for more control if needed, or use as_p for simplicity #}
-                    {# For proper Bootstrap styling, you'd typically render fields individually or use a package like django-crispy-forms #}
-                    {# Example of how you might structure it for manual rendering or with crispy-forms #}
-                    
-                    
+                    <!--
+                    This block iterates over the fields in the form and renders each one.
+                    This approach gives you more control over the rendering of each field compared to using `form.as_p` or `form.as_table`.
+                    -->
                     {% for field in form %}
                         <div class="mb-3">
+                            <!--
+                            `field.id_for_label` is the ID of the input element for the field.
+                            `field.label` is the label text for the field.
+                            -->
                             <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                            {{ field }} {# Add class="form-control" to widget in forms.py or render manually #}
+                            <!--
+                            This renders the input element for the field.
+                            The `form-control` class is added to the widget in `forms.py`.
+                            -->
+                            {{ field }}
+                            <!--
+                            This block displays the help text for the field, if any.
+                            -->
                             {% if field.help_text %}
                                 <div class="form-text">{{ field.help_text }}</div>
                             {% endif %}
+                            <!--
+                            This block displays any validation errors for the field.
+                            -->
                             {% for error in field.errors %}
                                 <div class="invalid-feedback d-block">{{ error }}</div>
                             {% endfor %}

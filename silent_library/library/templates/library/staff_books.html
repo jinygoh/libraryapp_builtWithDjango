@@ -1,18 +1,33 @@
+<!--
+This template extends the `base.html` template and provides the content for the staff book management page.
+-->
 {% extends 'library/base.html' %}
 
+<!--
+This block overrides the `title` block in `base.html` to set a custom title for the page.
+-->
 {% block title %}Manage Books - Staff Panel{% endblock %}
 
+<!--
+This block overrides the `content` block in `base.html` to provide the main content for the page.
+-->
 {% block content %}
 <div class="container mt-4">
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h1 class="h2">Manage Book Catalog</h1>
         <div class="btn-toolbar mb-2 mb-md-0">
+            <!--
+            The `url` tag generates a URL for the `add_book` view.
+            -->
             <a href="{% url 'add_book' %}" class="btn btn-success">
                 <i class="fas fa-plus-circle"></i> Add New Book
             </a>
         </div>
     </div>
 
+    <!--
+    This block displays any messages that are in the request context.
+    -->
     {% if messages %}
         {% for message in messages %}
             <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
@@ -22,6 +37,10 @@
         {% endfor %}
     {% endif %}
     
+    <!--
+    This block checks if there are any books in the `books` context variable.
+    If so, it displays a table of the books.
+    -->
     {% if books %}
     <div class="table-responsive shadow-sm">
         <table class="table table-striped table-hover table-bordered">
@@ -38,9 +57,15 @@
                 </tr>
             </thead>
             <tbody>
+                <!--
+                This block iterates over the `books` context variable and displays each book in a table row.
+                -->
                 {% for book in books %}
                 <tr>
                     <td>
+                        <!--
+                        This block checks if the book has an image and displays it if it does.
+                        -->
                         {% if book.image %}
                             <img src="{{ book.image.url }}" alt="{{ book.title }}" width="50">
                         {% endif %}
@@ -51,6 +76,9 @@
                     <td>{{ book.genres.all|join:", " }}</td>
                     <td>{{ book.isbn }}</td>
                     <td>
+                        <!--
+                        This block checks if the book is available and displays a badge accordingly.
+                        -->
                         {% if book.available_copies > 0 %}
                             <span class="badge bg-success">Yes</span>
                         {% else %}
@@ -58,10 +86,17 @@
                         {% endif %}
                     </td>
                     <td>
+                        <!--
+                        The `url` tag generates a URL for the `edit_book` view, passing the book ID as a parameter.
+                        -->
                         <a href="{% url 'edit_book' book.id %}" class="btn btn-sm btn-primary mb-1 me-1" title="Edit">
                             <i class="fas fa-edit"></i> Edit
                         </a>
-                        {# Delete should ideally be a POST request via a form #}
+                        {# This is a Django template comment. It is not rendered in the final HTML. #}
+                        <!--
+                        This form submits a POST request to the `delete_book` view to delete the book.
+                        The `csrf_token` tag is essential for security.
+                        -->
                         <form action="{% url 'delete_book' book.id %}" method="post" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this book?');">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-sm btn-danger mb-1" title="Delete">
@@ -74,6 +109,9 @@
             </tbody>
         </table>
     </div>
+    <!--
+    This block is displayed if there are no books in the catalog.
+    -->
     {% else %}
     <div class="alert alert-info mt-3">
         No books found in the catalog. <a href="{% url 'add_book' %}" class="alert-link">Add the first book now!</a>
@@ -95,6 +133,9 @@
 </div>
 {% endblock %}
 
+<!--
+This block is for including extra JavaScript files.
+-->
 {% block extra_js %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 {% endblock %}

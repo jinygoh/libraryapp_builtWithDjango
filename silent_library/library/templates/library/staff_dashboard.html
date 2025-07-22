@@ -1,13 +1,25 @@
+<!--
+This template extends the `base.html` template and provides the content for the staff dashboard.
+-->
 {% extends 'library/base.html' %}
 
+<!--
+This block overrides the `title` block in `base.html` to set a custom title for the staff dashboard page.
+-->
 {% block title %}Staff Dashboard - Silent Library{% endblock %}
 
+<!--
+This block overrides the `content` block in `base.html` to provide the main content for the staff dashboard page.
+-->
 {% block content %}
 <div class="container mt-4">
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h1 class="h2">Staff Dashboard</h1>
         <div class="btn-toolbar mb-2 mb-md-0">
             <div class="btn-group me-2">
+                <!--
+                The `url` tag generates URLs for the admin book and user management pages.
+                -->
                 <a href="{% url 'admin_books' %}" class="btn btn-sm btn-outline-secondary">Manage Books</a>
                 <a href="{% url 'admin_users' %}" class="btn btn-sm btn-outline-secondary">Manage Users</a>
             </div>
@@ -47,7 +59,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Track Borrowed Books</h5>
                     <p class="card-text">View books on loan, manage returns, and handle overdue items and fines.</p>
-                    {# This card might be replaced or supplemented by the detailed tables below #}
+                    {# This is a Django template comment. It is not rendered in the final HTML. #}
                     <a href="#active-loans-section" class="btn btn-light">View Active Loans</a>
                 </div>
             </div>
@@ -58,6 +70,10 @@
     <div class="row mt-4" id="active-loans-section">
         <div class="col-12">
             <h3 class="mb-3">Currently Active Loans</h3>
+            <!--
+            This block checks if there are any active loans.
+            If so, it displays a table of the loans.
+            -->
             {% if active_loans %}
                 <div class="table-responsive">
                     <table class="table table-striped table-hover">
@@ -71,6 +87,9 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <!--
+                            This block iterates over the `active_loans` context variable and displays each loan.
+                            -->
                             {% for loan in active_loans %}
                             <tr>
                                 <td>{{ loan.book.title }}</td>
@@ -81,6 +100,9 @@
                                     {% if loan.status == 'borrowed' %}bg-primary
                                     {% elif loan.status == 'overdue' %}bg-danger
                                     {% else %}bg-secondary{% endif %}">
+                                    <!--
+                                    `get_status_display` is a method that returns the human-readable version of the status field.
+                                    -->
                                     {{ loan.get_status_display }}
                                 </span></td>
                             </tr>
@@ -100,6 +122,10 @@
     <div class="row mt-4" id="overdue-books-section">
         <div class="col-12">
             <h3 class="mb-3">Overdue Books and Fines (as of {{ today|date:"Y-m-d" }})</h3>
+            <!--
+            This block checks if there are any overdue books with fines.
+            If so, it displays a table of the overdue books.
+            -->
             {% if overdue_books_with_fines %}
                 <div class="table-responsive">
                     <table class="table table-striped table-hover">
@@ -114,12 +140,18 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <!--
+                            This block iterates over the `overdue_books_with_fines` context variable and displays each item.
+                            -->
                             {% for item in overdue_books_with_fines %}
                             <tr>
                                 <td>{{ item.loan.book.title }}</td>
                                 <td>{{ item.loan.user.username }}</td>
                                 <td>{{ item.loan.due_date|date:"Y-m-d" }}</td>
                                 <td>{{ item.days_overdue }}</td>
+                                <!--
+                                The `floatformat` filter formats a number to a specified number of decimal places.
+                                -->
                                 <td>{{ item.fine_amount|floatformat:2 }}</td>
                                 <td><span class="badge bg-danger">
                                     {{ item.loan.get_status_display }}
@@ -135,6 +167,10 @@
                 </div>
             {% endif %}
 
+            <!--
+            This block checks if there are any overdue books with fines.
+            If so, it displays a button to send bulk overdue email notifications.
+            -->
             {% if overdue_books_with_fines %}
             <div class="mt-3">
                 <form method="POST" action="{% url 'send_overdue_emails' %}" onsubmit="return confirm('Are you sure you want to send overdue email notifications to all relevant borrowers?');">
@@ -219,6 +255,10 @@
 
 {% endblock %}
 
+<!--
+This block is for including extra JavaScript files.
+Child templates can override this block to add page-specific JavaScript.
+-->
 {% block extra_js %}
 <!-- Include Feather Icons (example, if you want to use them as in the template) -->
 <!-- <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
