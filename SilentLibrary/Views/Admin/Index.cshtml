@@ -1,0 +1,15 @@
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<ul>
+    <li><a asp-action="Books">Manage Books</a></li>
+    <li><a asp-action="Users">Manage Users</a></li>
+    <li>
+        <form asp-action="SendOverdueEmails" method="post">
+            <button type="submit" class="btn btn-primary">Send Overdue Emails</button>
+        </form>
+    </li>
+</ul>

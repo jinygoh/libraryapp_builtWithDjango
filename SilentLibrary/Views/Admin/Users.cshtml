@@ -1,0 +1,53 @@
+@model IEnumerable<User>
+@{
+    ViewData["Title"] = "Manage Users";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.UserName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsBlocked)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsBlocked)
+                </td>
+                <td>
+                    @if (item.IsBlocked)
+                    {
+                        <form asp-action="UnblockUser" asp-route-id="@item.Id" method="post">
+                            <button type="submit" class="btn btn-success">Unblock</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form asp-action="BlockUser" asp-route-id="@item.Id" method="post">
+                            <button type="submit" class="btn btn-danger">Block</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

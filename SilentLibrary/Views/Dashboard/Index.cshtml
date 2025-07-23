@@ -1,0 +1,63 @@
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<h3>My Loans</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Book</th>
+            <th>Borrow Date</th>
+            <th>Due Date</th>
+            <th>Return Date</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var loan in Model.Loans)
+        {
+            <tr>
+                <td>@loan.Book.Title</td>
+                <td>@loan.BorrowDate.ToShortDateString()</td>
+                <td>@loan.DueDate.ToShortDateString()</td>
+                <td>@(loan.ReturnDate.HasValue ? loan.ReturnDate.Value.ToShortDateString() : "")</td>
+                <td>@loan.Status</td>
+                <td>
+                    @if (loan.Status == LoanStatus.Borrowed)
+                    {
+                        <form asp-controller="Book" asp-action="ReturnBook" asp-route-loanId="@loan.Id" method="post">
+                            <button type="submit" class="btn btn-primary">Return</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h3>My Reviews</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Book</th>
+            <th>Rating</th>
+            <th>Review</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var review in Model.Reviews)
+        {
+            <tr>
+                <td>@review.Book.Title</td>
+                <td>@review.Rating</td>
+                <td>@review.ReviewText</td>
+                <td>@review.ReviewDate.ToShortDateString()</td>
+            </tr>
+        }
+    </tbody>
+</table>

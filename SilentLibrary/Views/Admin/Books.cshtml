@@ -1,0 +1,56 @@
+@model IEnumerable<Book>
+@{
+    ViewData["Title"] = "Manage Books";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<p>
+    <a asp-action="AddBook">Add New Book</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                Authors
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AvailableCopies)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TotalCopies)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @foreach (var author in item.BookAuthors)
+                    {
+                        <span>@author.Author.FirstName @author.Author.LastName</span>
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AvailableCopies)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TotalCopies)
+                </td>
+                <td>
+                    <a asp-action="EditBook" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="DeleteBook" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

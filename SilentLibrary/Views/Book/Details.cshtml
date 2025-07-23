@@ -1,0 +1,74 @@
+@model Book
+@{
+    ViewData["Title"] = "Book Details";
+}
+
+<h2>@Model.Title</h2>
+
+<div>
+    <h4>Authors</h4>
+    <ul>
+        @foreach (var author in Model.BookAuthors)
+        {
+            <li>@author.Author.FirstName @author.Author.LastName</li>
+        }
+    </ul>
+</div>
+<div>
+    <h4>Genres</h4>
+    <ul>
+        @foreach (var genre in Model.BookGenres)
+        {
+            <li>@genre.Genre.Name</li>
+        }
+    </ul>
+</div>
+<div>
+    <h4>ISBN</h4>
+    <p>@Model.Isbn</p>
+</div>
+<div>
+    <h4>Available Copies</h4>
+    <p>@Model.AvailableCopies</p>
+    @if (Model.AvailableCopies > 0)
+    {
+        <form asp-action="BorrowBook" asp-controller="Book" method="post">
+            <input type="hidden" name="bookId" value="@Model.Id" />
+            <button type="submit" class="btn btn-primary">Borrow</button>
+        </form>
+    }
+</div>
+
+<hr />
+
+<h3>Reviews</h3>
+@foreach (var review in Model.Reviews)
+{
+    <div>
+        <strong>@review.User.UserName</strong>
+        <p>@review.ReviewText</p>
+        <small>@review.ReviewDate.ToShortDateString()</small>
+    </div>
+}
+
+<hr />
+
+<h3>Add a Review</h3>
+<form asp-action="AddReview" asp-controller="Book" method="post">
+    <input type="hidden" name="bookId" value="@Model.Id" />
+    <div class="form-group">
+        <label for="rating">Rating</label>
+        <select name="rating" class="form-control">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="reviewText">Review</label>
+        <textarea name="reviewText" class="form-control"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit Review</button>
+</form>
