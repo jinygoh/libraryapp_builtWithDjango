@@ -39,3 +39,27 @@
     ]
   }
 }
+// This is the package.json file for the React frontend.
+// It contains metadata about the project and a list of its dependencies.
+//
+// "name": The name of the project.
+// "version": The version of the project.
+// "private": A boolean indicating whether the project is private.
+// "proxy": A proxy for API requests during development. This is used to avoid CORS issues.
+// "dependencies": A list of the project's dependencies.
+//   - "@testing-library/jest-dom": Provides custom Jest matchers for testing DOM elements.
+//   - "@testing-library/react": Provides utilities for testing React components.
+//   - "@testing-library/user-event": Provides utilities for simulating user events.
+//   - "axios": A library for making HTTP requests.
+//   - "react": The React library.
+//   - "react-dom": The React DOM library.
+//   - "react-router-dom": A library for routing in React applications.
+//   - "react-scripts": A set of scripts for creating and managing React projects.
+//   - "web-vitals": A library for measuring web performance.
+// "scripts": A set of scripts that can be run with npm.
+//   - "start": Starts the development server.
+//   - "build": Builds the application for production.
+//   - "test": Runs the tests.
+//   - "eject": Ejects the application from create-react-app.
+// "eslintConfig": The ESLint configuration for the project.
+// "browserslist": The list of browsers that the project supports.

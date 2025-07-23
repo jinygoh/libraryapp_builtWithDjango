@@ -1,3 +1,5 @@
+// This component renders the home page of the application.
+
 import React from 'react';
 
 const Home = () => {
