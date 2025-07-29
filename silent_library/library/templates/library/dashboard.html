@@ -1,12 +1,24 @@
+<!--
+This template extends the `base.html` template and provides the content for the user dashboard.
+-->
 {% extends 'library/base.html' %}
 
+<!--
+This block overrides the `title` block in `base.html` to set a custom title for the dashboard page.
+-->
 {% block title %}Dashboard - Silent Library{% endblock %}
 
+<!--
+This block overrides the `content` block in `base.html` to provide the main content for the dashboard page.
+-->
 {% block content %}
 <div class="container mt-4">
     <div class="row">
         <div class="col-12">
             <div class="bg-light p-5 rounded-3 shadow-sm">
+                <!--
+                `user.username` is a context variable that contains the username of the currently logged-in user.
+                -->
                 <h1 class="display-5 fw-bold">Welcome to your Dashboard, {{ user.username }}!</h1>
                 <p class="fs-4">This is your personalized space to manage your library activities.</p>
                 <hr class="my-4">
@@ -23,11 +35,40 @@
                 <div class="card-body">
                     <h5 class="card-title">My Borrowed Books</h5>
                     <p class="card-text">View the books you currently have on loan and their due dates.</p>
-                    {# Placeholder for borrowed books list - to be implemented with actual data #}
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item">No books currently borrowed (Feature coming soon).</li>
+                        <!--
+                        This block iterates over the `loans` context variable, which is a list of the user's loans.
+                        -->
+                        {% for loan in loans %}
+                            <!--
+                            This block checks if the loan status is 'borrowed'.
+                            -->
+                            {% if loan.status == 'borrowed' %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <!--
+                                        `loan.book.title` and `loan.book.authors.all` are context variables that contain the book's title and authors.
+                                        The `join` filter concatenates the authors with a comma.
+                                        `loan.due_date` is a context variable that contains the due date of the loan.
+                                        The `date` filter formats the date as "YYYY-MM-DD".
+                                        -->
+                                        <strong>{{ loan.book.title }}</strong> by {{ loan.book.authors.all|join:", " }}
+                                        <br>
+                                        <small class="text-muted">Due: {{ loan.due_date|date:"Y-m-d" }}</small>
+                                    </div>
+                                    <!--
+                                    The `url` tag generates a URL for the `return_book` view, passing the loan ID as a parameter.
+                                    -->
+                                    <a href="{% url 'return_book' loan.id %}" class="btn btn-warning btn-sm">Return</a>
+                                </li>
+                            {% endif %}
+                        <!--
+                        The `empty` tag is displayed if the `loans` list is empty.
+                        -->
+                        {% empty %}
+                            <li class="list-group-item">No books currently borrowed.</li>
+                        {% endfor %}
                     </ul>
-                    <a href="#" class="btn btn-outline-primary mt-3 disabled">View Borrowing History</a>
                 </div>
             </div>
         </div>
@@ -36,16 +77,36 @@
                 <div class="card-body">
                     <h5 class="card-title">My Reviews & Ratings</h5>
                     <p class="card-text">See the reviews and ratings you've given to books.</p>
-                    {# Placeholder for reviews - to be implemented #}
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item">You have not reviewed any books yet (Feature coming soon).</li>
+                        <!--
+                        This block iterates over the `reviews` context variable, which is a list of the user's reviews.
+                        -->
+                        {% for review in reviews %}
+                            <li class="list-group-item">
+                                <!--
+                                `review.book.title`, `review.rating`, and `review.review_text` are context variables that contain the review's details.
+                                -->
+                                <strong>{{ review.book.title }}</strong>
+                                <br>
+                                <small class="text-muted">Rating: {{ review.rating }}/5</small>
+                                <p>{{ review.review_text }}</p>
+                            </li>
+                        <!--
+                        The `empty` tag is displayed if the `reviews` list is empty.
+                        -->
+                        {% empty %}
+                            <li class="list-group-item">You have not reviewed any books yet.</li>
+                        {% endfor %}
                     </ul>
-                    <a href="#" class="btn btn-outline-primary mt-3 disabled">View My Reviews</a>
                 </div>
             </div>
         </div>
     </div>
 
+    <!--
+    This block checks if the user is a staff member.
+    If so, it displays a link to the admin dashboard.
+    -->
     {% if user.is_staff %}
     <div class="row mt-4">
         <div class="col-12">

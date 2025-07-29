@@ -1,13 +1,21 @@
+<!--
+This is the base template for the entire site. Other templates will extend this one.
+It provides the basic HTML structure, including the head, navigation bar, and footer.
+-->
 <!doctype html>
 <html lang="en">
 <head>
     <!-- Required meta tags -->
-    <meta charset="utf-8">
+    <meta charset="utf-g">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
+    <!--
+    The `block` tag defines a block that can be overridden by child templates.
+    This `title` block sets the default title for the site, but child templates can provide a more specific title.
+    -->
     <title>{% block title %}Silent Library{% endblock %}</title>
 
     <style>
@@ -24,19 +32,33 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
+            <!--
+            The `url` tag generates a URL for a given view name.
+            This is the recommended way to link to pages in a Django project, as it avoids hardcoding URLs.
+            -->
             <a class="navbar-brand" href="{% url 'home' %}">Silent Library</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNavDropdown">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <!--
+                    The `if` tag allows for conditional rendering.
+                    This block checks if the user is not a staff member and displays the home and search links accordingly.
+                    -->
+                    {% if not user.is_staff %}
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="{% url 'home' %}">Home</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'search_books' %}">Search Books</a>
                     </li>
-                    {% if user.is_authenticated %}
+                    {% endif %}
+                    <!--
+                    This block checks if the user is authenticated and not a staff member.
+                    If so, it displays the dashboard and profile links.
+                    -->
+                    {% if user.is_authenticated and not user.is_staff %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
                         </li>
@@ -46,9 +68,17 @@
                     {% endif %}
                 </ul>
                 <ul class="navbar-nav">
+                    <!--
+                    This block checks if the user is authenticated.
+                    If so, it displays a welcome message with the user's username and a logout button.
+                    Otherwise, it displays login and register links.
+                    -->
                     {% if user.is_authenticated %}
                         <li class="nav-item">
                             <span class="navbar-text me-2">
+                                <!--
+                                `user.username` is a context variable that contains the username of the currently logged-in user.
+                                -->
                                 Welcome, {{ user.username }}
                             </span>
                         </li>
@@ -63,9 +93,13 @@
                             <a class="btn btn-primary" href="{% url 'register' %}">Register</a>
                         </li>
                     {% endif %}
+                     <!--
+                    This block checks if the user is a staff member.
+                    If so, it displays a link to the staff panel.
+                    -->
                      {% if user.is_staff %}
                         <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
-                             <a class="btn btn-warning" href="{% url 'admin_dashboard' %}">Admin Panel</a>
+                             <a class="btn btn-warning" href="{% url 'admin_dashboard' %}">Staff Panel</a>
                         </li>
                      {% endif %}
                 </ul>
@@ -74,20 +108,38 @@
     </nav>
 
     <main class="container mt-4">
+        <!--
+        This block checks if there are any messages in the request context.
+        Messages are used to display one-time notifications to the user (e.g., success or error messages).
+        -->
         {% if messages %}
+            <!--
+            The `for` tag iterates over a list of items.
+            This block iterates over the messages and displays each one in an alert box.
+            -->
             {% for message in messages %}
+                <!--
+                `message.tags` is used to apply a CSS class to the alert box, based on the message level (e.g., 'success', 'error').
+                -->
                 <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
                     {{ message }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             {% endfor %}
         {% endif %}
+        <!--
+        This is the main content block. Child templates will override this block to provide the specific content for each page.
+        -->
         {% block content %}
         {% endblock %}
     </main>
 
     <footer class="site-footer text-center">
         <div class="container">
+            <!--
+            The `now` tag displays the current date and/or time.
+            "Y" is a format string that displays the current year.
+            -->
             <p class="mb-0">&copy; {% now "Y" %} Silent Library. All rights reserved.</p>
         </div>
     </footer>
@@ -95,6 +147,10 @@
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
+    <!--
+    This block is for including extra JavaScript files.
+    Child templates can override this block to add page-specific JavaScript.
+    -->
     {% block extra_js %}{% endblock %}
 </body>
 </html>

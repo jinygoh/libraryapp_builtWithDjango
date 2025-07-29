@@ -1,7 +1,16 @@
+<!--
+This template extends the `base.html` template and provides the content for the user login page.
+-->
 {% extends 'library/base.html' %}
 
+<!--
+This block overrides the `title` block in `base.html` to set a custom title for the login page.
+-->
 {% block title %}Login - Silent Library{% endblock %}
 
+<!--
+This block overrides the `content` block in `base.html` to provide the main content for the login page.
+-->
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-6 col-lg-4">
@@ -9,9 +18,14 @@
             <div class="card-body">
                 <h2 class="card-title text-center mb-4">Login to Your Account</h2>
                 <form method="post" novalidate>
+                    <!--
+                    The `csrf_token` tag is essential for security in forms that use the POST method.
+                    -->
                     {% csrf_token %}
 
-                    {# Render non-field errors if any #}
+                    <!--
+                    This block renders any non-field errors from the form, such as "Invalid login credentials".
+                    -->
                     {% if form.non_field_errors %}
                         <div class="alert alert-danger">
                             {% for error in form.non_field_errors %}
@@ -20,6 +34,9 @@
                         </div>
                     {% endif %}
                     
+                    <!--
+                    This block iterates over the fields in the form and renders them individually.
+                    -->
                     {% for field in form %}
                         <div class="mb-3">
                             <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
@@ -38,6 +55,9 @@
                         <button type="submit" class="btn btn-primary btn-lg">Login</button>
                     </div>
                     <div class="text-center mt-3">
+                        <!--
+                        The `url` tag generates a URL for the password reset page.
+                        -->
                         <a href="{% url 'password_reset' %}">Forgot password?</a>
                     </div>
                 </form>

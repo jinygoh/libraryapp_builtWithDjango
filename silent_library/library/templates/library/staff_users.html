@@ -1,0 +1,44 @@
+<!--
+This template extends the `base.html` template and provides the content for the staff user management page.
+-->
+{% extends 'library/base.html' %}
+
+<!--
+This block overrides the `content` block in `base.html` to provide the main content for the page.
+-->
+{% block content %}
+  <h2>Manage Users</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Blocked</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!--
+      This block iterates over the `users` context variable and displays each user in a table row.
+      -->
+      {% for user in users %}
+        <tr>
+          <td>{{ user.username }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.is_blocked }}</td>
+          <td>
+            <!--
+            This block checks if the user is blocked and displays a "Block" or "Unblock" button accordingly.
+            The `url` tag generates a URL for the `block_user` or `unblock_user` view, passing the user ID as a parameter.
+            -->
+            {% if user.is_blocked %}
+              <a href="{% url 'unblock_user' user.id %}" class="btn btn-success">Unblock</a>
+            {% else %}
+              <a href="{% url 'block_user' user.id %}" class="btn btn-danger">Block</a>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

@@ -1,22 +1,38 @@
+# This file contains the view functions for the 'library' app.
+# Each view function is responsible for handling a specific HTTP request and returning an HTTP response.
+# The views are the business logic of the application.
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.urls import reverse_lazy
 from django.contrib import messages
-from django.core.mail import send_mail
-from .models import Book, Author, Genre, Loan, Review
+from django.core.mail import send_mail, send_mass_mail
+from .models import Book, Author, Genre, Loan, Review, User
 from .forms import UserRegistrationForm, UserLoginForm, UserEditForm, BookForm, ReviewForm
 from django.db.models import Q
 from django.conf import settings
 
 
-def is_admin(user):
+def is_staff_user(user):
+    """
+    This function checks if a user is a staff member.
+    It is used by the 'user_passes_test' decorator to restrict access to certain views.
+    """
     return user.is_staff
 
 def home(request):
+    """
+    This view renders the home page of the library.
+    It does not require any authentication.
+    """
     return render(request, 'library/home.html')
 
 def register(request):
+    """
+    This view handles user registration.
+    If the request method is POST, it processes the registration form.
+    If the form is valid, it saves the user and sends a confirmation email.
+    """
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
@@ -48,9 +64,18 @@ def register(request):
     return render(request, 'library/register.html', {'form': form})
 
 def registration_complete(request):
+    """
+    This view renders the registration complete page.
+    It is shown to the user after they have successfully registered.
+    """
     return render(request, 'library/registration_complete.html')
 
 def login_view(request):
+    """
+    This view handles user login.
+    If the request method is POST, it processes the login form.
+    If the form is valid, it authenticates the user and logs them in.
+    """
     if request.method == 'POST':
         form = UserLoginForm(request.POST)
         if form.is_valid():
@@ -58,28 +83,46 @@ def login_view(request):
             password = form.cleaned_data.get('password')
             user = authenticate(username=username, password=password)
             if user is not None:
+                if user.is_blocked:
+                    messages.error(request, 'This account has been blocked.')
+                    return redirect('login')
                 login(request, user)
                 if user.is_staff:
                     return redirect('admin_dashboard')
                 return redirect('dashboard')
+            else:
+                messages.error(request, 'Invalid username or password.')
     else:
         form = UserLoginForm()
     return render(request, 'library/login.html', {'form': form})
 
 @login_required
 def logout_view(request):
+    """
+    This view handles user logout.
+    It logs the user out and redirects them to the home page.
+    """
     logout(request)
     return redirect('home')
 
 @login_required
 def dashboard(request):
+    """
+    This view renders the user dashboard.
+    It shows the user's loans and reviews.
+    """
     loans = Loan.objects.filter(user=request.user)
-    return render(request, 'library/dashboard.html', {'loans': loans})
+    reviews = Review.objects.filter(user=request.user)
+    return render(request, 'library/dashboard.html', {'loans': loans, 'reviews': reviews})
 
 from .forms import UserRegistrationForm, UserLoginForm, UserEditForm, UserEditUsernameEmailForm, UserEditPasswordForm, BookForm, ReviewForm
 
 @login_required
 def profile(request):
+    """
+    This view handles user profile updates.
+    It allows the user to edit their profile information, username, email, and password.
+    """
     if 'edit_profile' in request.POST:
         form = UserEditForm(request.POST, instance=request.user)
         if form.is_valid():
@@ -116,68 +159,387 @@ def profile(request):
     })
 
 def search_books(request):
+    """
+    This view handles book searches.
+    It allows users to search for books by title, author, or genre.
+    """
     query = request.GET.get('q')
     books = Book.objects.all()
     if query:
+        # For author search, split query to handle full names
+        author_queries = Q()
+        for term in query.split():
+            author_queries |= Q(authors__first_name__icontains=term)
+            author_queries |= Q(authors__last_name__icontains=term)
+
         books = books.filter(
             Q(title__icontains=query) |
-            Q(authors__first_name__icontains=query) |
-            Q(authors__last_name__icontains=query) |
+            author_queries |
             Q(genres__genre__icontains=query)
         ).distinct()
     return render(request, 'library/search.html', {'books': books, 'query': query})
 
 def book_detail(request, book_id):
+    """
+    This view renders the detail page for a specific book.
+    It shows the book's details, reviews, and a form to submit a new review.
+    """
     book = get_object_or_404(Book, pk=book_id)
     reviews = Review.objects.filter(book=book)
+    has_borrowed = False
+    if request.user.is_authenticated:
+        has_borrowed = Loan.objects.filter(book=book, user=request.user).exists()
+
     if request.method == 'POST':
+        if not has_borrowed:
+            messages.error(request, "You can only review books you have borrowed.")
+            return redirect('book_detail', book_id=book.pk)
         form = ReviewForm(request.POST)
         if form.is_valid():
             review = form.save(commit=False)
             review.book = book
             review.user = request.user
             review.save()
+            messages.success(request, "Your review has been submitted successfully.")
             return redirect('book_detail', book_id=book.pk)
     else:
         form = ReviewForm()
-    return render(request, 'library/book_detail.html', {'book': book, 'reviews': reviews, 'form': form})
+    return render(request, 'library/book_detail.html', {'book': book, 'reviews': reviews, 'form': form, 'has_borrowed': has_borrowed})
 
-@user_passes_test(is_admin, login_url=reverse_lazy('admin_login'))
+from .models import Book, Author, Genre, Loan, Review, LoanStatus # Added LoanStatus
+from django.db.models import Q # Ensure Q is imported if not already for LoanStatus filtering
+
+@user_passes_test(is_staff_user, login_url=reverse_lazy('login'))
 def admin_dashboard(request):
-    return render(request, 'library/admin_dashboard.html')
+    """
+    This view renders the admin dashboard.
+    It shows active loans, overdue books, and fines.
+    This view is only accessible to staff members.
+    """
+    import datetime # For calculating overdue fines
+    from django.utils import timezone # More robust for today's date if timezone awareness is needed
+    # Active Loans (already implemented)
+    active_loans = Loan.objects.filter(
+        Q(status=LoanStatus.BORROWED) | Q(status=LoanStatus.OVERDUE)
+    ).select_related('book', 'user').order_by('due_date')
 
-@user_passes_test(is_admin, login_url=reverse_lazy('admin_login'))
-def admin_books(request):
-    books = Book.objects.all()
-    return render(request, 'library/admin_books.html', {'books': books})
+    # Overdue Books and Fines
+    today = timezone.now().date() # Use timezone-aware current date
 
-@user_passes_test(is_admin, login_url=reverse_lazy('admin_login'))
-def add_book(request):
+    # Query for loans that are overdue or borrowed and past due_date
+    # This ensures we catch loans that might not have been explicitly marked 'overdue' yet
+    overdue_loans_query = Loan.objects.filter(
+        Q(status=LoanStatus.OVERDUE) | (Q(status=LoanStatus.BORROWED) & Q(due_date__lt=today))
+    ).select_related('book', 'user').order_by('due_date')
+
+    overdue_books_with_fines = []
+    for loan in overdue_loans_query:
+        if loan.due_date < today: # Double check, especially for 'borrowed' loans
+            days_overdue = (today - loan.due_date).days
+            fine_amount = days_overdue * 1.00 # $1 per day
+            overdue_books_with_fines.append({
+                'loan': loan,
+                'days_overdue': days_overdue,
+                'fine_amount': fine_amount,
+            })
+        elif loan.status == LoanStatus.OVERDUE: # Already marked overdue, but due_date might not be in past (edge case)
+            # This case implies the status was set manually or by another process
+            # If due_date is not in the past, fine might be 0 or based on a different logic
+            # For now, only calculate fine if due_date is past
+            days_overdue = 0
+            fine_amount = 0.00
+            if loan.due_date < today: # Recalculate if it was marked overdue but due_date is past
+                 days_overdue = (today - loan.due_date).days
+                 fine_amount = days_overdue * 1.00
+
+            overdue_books_with_fines.append({
+                'loan': loan,
+                'days_overdue': days_overdue, # Could be 0 if due_date is not yet past but status is OVERDUE
+                'fine_amount': fine_amount,
+            })
+
+
+    context = {
+        'active_loans': active_loans,
+        'overdue_books_with_fines': overdue_books_with_fines,
+        'today': today, # For display or reference in template if needed
+    }
+    return render(request, 'library/staff_dashboard.html', context)
+
+
+from django.utils import timezone
+
+@user_passes_test(is_staff_user, login_url=reverse_lazy('login'))
+def bulk_email_overdue_borrowers(request):
+    """
+    This view sends bulk emails to users with overdue books.
+    It calculates the overdue days and fine amount for each book.
+    This view is only accessible to staff members.
+    """
     if request.method == 'POST':
-        form = BookForm(request.POST)
+        today = timezone.now().date()
+
+        overdue_loans_query = Loan.objects.filter(
+            Q(status=LoanStatus.OVERDUE) | (Q(status=LoanStatus.BORROWED) & Q(due_date__lt=today))
+        ).select_related('user', 'book')
+
+        borrowers_to_notify = {} # {user_email: {'user': user_obj, 'books': []}}
+
+        for loan in overdue_loans_query:
+            if loan.due_date < today : # Ensure it's actually overdue for fine calculation and notification
+                if loan.user.email not in borrowers_to_notify:
+                    borrowers_to_notify[loan.user.email] = {
+                        'user': loan.user,
+                        'books_details': []
+                    }
+
+                days_overdue = (today - loan.due_date).days
+                fine_amount = days_overdue * 1.00
+
+                borrowers_to_notify[loan.user.email]['books_details'].append({
+                    'title': loan.book.title,
+                    'due_date': loan.due_date.strftime("%Y-%m-%d"),
+                    'days_overdue': days_overdue,
+                    'fine': fine_amount
+                })
+
+        messages_to_send = []
+        notified_users_count = 0
+        failed_users_count = 0
+
+        for email, data in borrowers_to_notify.items():
+            user = data['user']
+            book_list_str = ""
+            total_fine_for_user = 0
+            for book_detail in data['books_details']:
+                book_list_str += f"- \"{book_detail['title']}\" (Due: {book_detail['due_date']}, Overdue: {book_detail['days_overdue']} days, Fine: ${book_detail['fine']:.2f})\n"
+                total_fine_for_user += book_detail['fine']
+
+            if not book_list_str: # Should not happen if logic is correct, but as a safeguard
+                continue
+
+            email_subject = 'Action Required: Overdue Library Books'
+            email_message = (
+                f"Dear {user.first_name or user.username},\n\n"
+                f"Our records show that you have one or more books overdue from Silent Library:\n\n"
+                f"{book_list_str}\n"
+                f"Total estimated fine for these books: ${total_fine_for_user:.2f}\n\n"
+                f"Please return these books as soon as possible to avoid further fines. "
+                f"If you have already returned these books or believe this is an error, please contact us.\n\n"
+                f"Thank you,\nSilent Library Team"
+            )
+
+            # For send_mass_mail, each message is a tuple: (subject, message, from_email, recipient_list)
+            messages_to_send.append((email_subject, email_message, settings.DEFAULT_FROM_EMAIL, [user.email]))
+
+        if messages_to_send:
+            try:
+                # Use send_mass_mail for efficiency
+                num_sent = send_mass_mail(messages_to_send, fail_silently=False)
+                notified_users_count = num_sent
+                failed_users_count = len(messages_to_send) - num_sent
+
+                if notified_users_count > 0:
+                    messages.success(request, f'Successfully sent {notified_users_count} overdue notices.')
+                if failed_users_count > 0:
+                    messages.error(request, f'Failed to send notices to {failed_users_count} users. Check logs for details.')
+                if not messages_to_send:
+                    messages.info(request, 'No overdue books found requiring notification.')
+
+            except Exception as e:
+                messages.error(request, f'An error occurred while trying to send emails: {str(e)}')
+        else:
+            messages.info(request, 'No overdue books found requiring notification.')
+
+        return redirect('admin_dashboard') # Redirect back to dashboard
+
+    # If not POST, or if accessed directly via GET (though not typical for this action)
+    return redirect('admin_dashboard')
+
+
+@user_passes_test(is_staff_user, login_url=reverse_lazy('login'))
+def admin_books(request):
+    """
+    This view renders the admin page for managing books.
+    It shows a list of all books in the library.
+    This view is only accessible to staff members.
+    """
+    books = Book.objects.all()
+    return render(request, 'library/staff_books.html', {'books': books})
+
+@user_passes_test(is_staff_user, login_url=reverse_lazy('login'))
+def add_book(request):
+    """
+    This view handles adding a new book to the library.
+    If the request method is POST, it processes the book form.
+    If the form is valid, it saves the book and its author and genres.
+    This view is only accessible to staff members.
+    """
+    if request.method == 'POST':
+        form = BookForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            book = form.save(commit=False)
+            book.save()
+
+            author_first_name = form.cleaned_data['author_first_name']
+            author_last_name = form.cleaned_data['author_last_name']
+            author, created = Author.objects.get_or_create(first_name=author_first_name, last_name=author_last_name)
+            book.authors.add(author)
+
+            for i in range(1, 4):
+                genre = form.cleaned_data.get(f'genre{i}')
+                if genre:
+                    book.genres.add(genre)
+
             return redirect('admin_books')
     else:
         form = BookForm()
     return render(request, 'library/book_form.html', {'form': form})
 
-@user_passes_test(is_admin, login_url=reverse_lazy('admin_login'))
+@user_passes_test(is_staff_user, login_url=reverse_lazy('login'))
 def edit_book(request, book_id):
+    """
+    This view handles editing an existing book in the library.
+    If the request method is POST, it processes the book form.
+    If the form is valid, it saves the updated book information.
+    This view is only accessible to staff members.
+    """
     book = get_object_or_404(Book, pk=book_id)
     if request.method == 'POST':
-        form = BookForm(request.POST, instance=book)
+        form = BookForm(request.POST, request.FILES, instance=book)
         if form.is_valid():
-            form.save()
+            book = form.save(commit=False)
+            book.save()
+
+            author_first_name = form.cleaned_data['author_first_name']
+            author_last_name = form.cleaned_data['author_last_name']
+            author, created = Author.objects.get_or_create(first_name=author_first_name, last_name=author_last_name)
+            book.authors.set([author])
+
+            book.genres.clear()
+            for i in range(1, 4):
+                genre = form.cleaned_data.get(f'genre{i}')
+                if genre:
+                    book.genres.add(genre)
+
             return redirect('admin_books')
     else:
-        form = BookForm(instance=book)
+        author = book.authors.first()
+        initial_data = {
+            'author_first_name': author.first_name if author else '',
+            'author_last_name': author.last_name if author else '',
+        }
+        genres = book.genres.all()
+        for i, genre in enumerate(genres[:3]):
+            initial_data[f'genre{i+1}'] = genre
+
+        form = BookForm(instance=book, initial=initial_data)
     return render(request, 'library/book_form.html', {'form': form})
 
-@user_passes_test(is_admin, login_url=reverse_lazy('admin_login'))
+@user_passes_test(is_staff_user, login_url=reverse_lazy('login'))
+def admin_users(request):
+    """
+    This view renders the admin page for managing users.
+    It shows a list of all users in the library.
+    This view is only accessible to staff members.
+    """
+    users = User.objects.all()
+    return render(request, 'library/staff_users.html', {'users': users})
+
+@user_passes_test(is_staff_user, login_url=reverse_lazy('login'))
+def block_user(request, user_id):
+    """
+    This view handles blocking a user.
+    It sets the 'is_blocked' flag for the user to True.
+    This view is only accessible to staff members.
+    """
+    user = get_object_or_404(User, pk=user_id)
+    user.is_blocked = True
+    user.save()
+    return redirect('admin_users')
+
+@user_passes_test(is_staff_user, login_url=reverse_lazy('login'))
+def unblock_user(request, user_id):
+    """
+    This view handles unblocking a user.
+    It sets the 'is_blocked' flag for the user to False.
+    This view is only accessible to staff members.
+    """
+    user = get_object_or_404(User, pk=user_id)
+    user.is_blocked = False
+    user.save()
+    return redirect('admin_users')
+
+@user_passes_test(is_staff_user, login_url=reverse_lazy('login'))
 def delete_book(request, book_id):
+    """
+    This view handles deleting a book from the library.
+    If the request method is POST, it deletes the book and its associated data.
+    This view is only accessible to staff members.
+    """
     book = get_object_or_404(Book, pk=book_id)
     if request.method == 'POST':
+        book.authors.clear()
+        book.genres.clear()
         book.delete()
         return redirect('admin_books')
     return render(request, 'library/book_confirm_delete.html', {'book': book})
+
+from datetime import timedelta
+
+@login_required
+def borrow_book(request, book_id):
+    """
+    This view handles borrowing a book.
+    It creates a new loan record for the user and the book.
+    It also decrements the number of available copies of the book.
+    """
+    book = get_object_or_404(Book, pk=book_id)
+    if request.user.is_blocked:
+        messages.error(request, "Your account is blocked. You are not allowed to borrow books.")
+        return redirect('book_detail', book_id=book.pk)
+    if book.available_copies > 0:
+        due_date = timezone.now().date() + timedelta(days=14)
+        loan = Loan.objects.create(user=request.user, book=book, due_date=due_date)
+        book.available_copies -= 1
+        book.save()
+        messages.success(request, f"You have successfully borrowed '{book.title}'.")
+    else:
+        messages.error(request, "This book is not available for borrowing.")
+    return redirect('book_detail', book_id=book.pk)
+
+@login_required
+def return_book(request, loan_id):
+    """
+    This view handles returning a book.
+    It updates the loan record to mark the book as returned.
+    It also increments the number of available copies of the book.
+    """
+    loan = get_object_or_404(Loan, pk=loan_id, user=request.user)
+    if loan.status == 'borrowed':
+        loan.status = 'returned'
+        loan.return_date = timezone.now().date()
+        loan.save()
+        loan.book.available_copies += 1
+        loan.book.save()
+        messages.success(request, f"You have successfully returned '{loan.book.title}'.")
+    else:
+        messages.error(request, "This book has already been returned.")
+    return redirect('dashboard')
+
+
+import logging
+from django.contrib.auth import views as auth_views
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
+
+class CustomLoginView(auth_views.LoginView):
+    """
+    This class is a custom login view that logs successful login attempts.
+    It inherits from the built-in Django LoginView.
+    """
+    def form_valid(self, form):
+        # Log successful login attempts
+        logger.info(f"User '{form.cleaned_data.get('username')}' logged in successfully.")
+        return super().form_valid(form)

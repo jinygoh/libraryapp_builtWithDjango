@@ -1,13 +1,13 @@
 {% extends 'library/base.html' %}
 
-{% block title %}Admin Login - Silent Library{% endblock %}
+{% block title %}Staff Login - Silent Library{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-6 col-lg-4">
         <div class="card shadow-sm mt-5">
             <div class="card-header bg-dark text-white">
-                <h2 class="card-title text-center mb-0">Administrator Login</h2>
+                <h2 class="card-title text-center mb-0">Staff Login</h2>
             </div>
             <div class="card-body">
                 {% if form.errors and not form.non_field_errors %}
@@ -31,7 +31,7 @@
 
                     
                     <div class="d-grid">
-                        <button type="submit" class="btn btn-primary btn-lg">Login as Admin</button>
+                        <button type="submit" class="btn btn-primary btn-lg">Login as Staff</button>
                     </div>
                 </form>
             </div>

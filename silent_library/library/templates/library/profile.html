@@ -1,10 +1,28 @@
+<!--
+This template extends the `base.html` template and provides the content for the user profile page.
+-->
 {% extends 'library/base.html' %}
 
+<!--
+This block overrides the `content` block in `base.html` to provide the main content for the profile page.
+-->
 {% block content %}
+  <!--
+  This block checks if there are any errors in the forms.
+  If so, it displays a generic error message.
+  -->
+  {% if form.errors or username_email_form.errors or password_form.errors %}
+    <div class="alert alert-danger">
+        <strong>Please correct the errors below.</strong>
+    </div>
+  {% endif %}
 
   <div class="card mb-4">
     <div class="card-header">Account Details</div>
     <div class="card-body">
+      <!--
+      These are context variables that display the user's account details.
+      -->
       <p><strong>Username:</strong> {{ user.username }}</p>
       <p><strong>Email:</strong> {{ user.email }}</p>
       <p><strong>First Name:</strong> {{ user.first_name }}</p>
@@ -18,7 +36,13 @@
     <div class="card-header">Edit First and Last Name</div>
     <div class="card-body">
       <form method="post">
+        <!--
+        The `csrf_token` tag is essential for security in forms that use the POST method.
+        -->
         {% csrf_token %}
+        <!--
+        `form.as_p` renders the form fields as a series of paragraphs.
+        -->
         {{ form.as_p }}
         <button type="submit" name="edit_profile" class="btn btn-primary">Save Changes</button>
       </form>
@@ -30,6 +54,9 @@
     <div class="card-body">
       <form method="post">
         {% csrf_token %}
+        <!--
+        `username_email_form.as_p` renders the username and email form fields as a series of paragraphs.
+        -->
         {{ username_email_form.as_p }}
         <button type="submit" name="edit_username_email" class="btn btn-primary">Save Changes</button>
       </form>
@@ -41,10 +68,19 @@
     <div class="card-body">
       <form method="post">
         {% csrf_token %}
+        <!--
+        This block iterates over the fields in the password form and renders them individually.
+        -->
         {% for field in password_form %}
           <div class="form-group">
+            <!--
+            `field.label_tag` renders the label for the field.
+            -->
             {{ field.label_tag }}
             {{ field }}
+            <!--
+            This block displays any validation errors for the field.
+            -->
             {% for error in field.errors %}
               <div class="alert alert-danger">{{ error }}</div>
             {% endfor %}

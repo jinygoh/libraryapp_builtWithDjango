@@ -1,3 +1,6 @@
+# This file is the main configuration file for the Django project.
+# It contains settings for the database, installed applications, middleware, and other project-wide configurations.
+# This file is crucial for the proper functioning of the Django application.
 """
 Django settings for silent_library project.
 
@@ -9,40 +12,50 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
+# Import necessary libraries
 import os
 from dotenv import load_dotenv
 from pathlib import Path
 
+# Load environment variables from a .env file
 load_dotenv()
 
+# Define the base directory of the project
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
+# These are quick-start development settings. They are not suitable for a production environment.
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
+# SECURITY WARNING: The secret key should be kept secret in a production environment.
+# It is used for cryptographic signing.
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
+# SECURITY WARNING: Debug mode should not be enabled in a production environment.
+# It can expose sensitive information.
 DEBUG = True
 
+# A list of allowed host/domain names that this Django site can serve.
 ALLOWED_HOSTS = []
 
 
-# Application definition
-
+# This section defines the applications that are installed in the Django project.
+# Each app is a Python package that provides some functionality.
 INSTALLED_APPS = [
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-    "library",
+    # Default Django apps
+    "django.contrib.admin", # The admin site
+    "django.contrib.auth", # Authentication framework
+    "django.contrib.contenttypes", # Content type framework
+    "django.contrib.sessions", # Session framework
+    "django.contrib.messages", # Messaging framework
+    "django.contrib.staticfiles", # Framework for managing static files
+    # Custom apps
+    "library", # The main application for the library project
 ]
 
+# This section defines the middleware that is used in the Django project.
+# Middleware is a framework of hooks into Django's request/response processing.
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -53,8 +66,11 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+# This setting specifies the root URL configuration for the project.
+# It is a string that points to the URL configuration module.
 ROOT_URLCONF = "silent_library.urls"
 
+# This section defines the template engines that are used in the Django project.
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -70,12 +86,12 @@ TEMPLATES = [
     },
 ]
 
+# This setting specifies the WSGI application that is used by the Django development server.
 WSGI_APPLICATION = "silent_library.wsgi.application"
 
 
-# Database
+# This section defines the database configuration for the project.
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
@@ -88,9 +104,8 @@ DATABASES = {
 }
 
 
-# Password validation
+# This section defines the password validators that are used in the Django project.
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -107,9 +122,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
+# This section defines the internationalization settings for the project.
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
-
 LANGUAGE_CODE = "en-us"
 
 TIME_ZONE = "UTC"
@@ -119,19 +133,26 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
+# This section defines the settings for static files (CSS, JavaScript, Images).
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
-
 STATIC_URL = "static/"
 
-# Default primary key field type
+# This setting defines the default primary key field type for models.
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# This setting specifies the custom user model that is used for authentication.
 AUTH_USER_MODEL = "library.User"
 
+# These settings define the URLs for login, login redirect, and logout redirect.
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'dashboard'
+LOGOUT_REDIRECT_URL = 'home'
+
 ############################ Email Configuration ############################
+# This section configures the email settings for the project.
+# It is used for sending emails, such as password reset emails.
+
 # Email server configuration
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 #Gmail SMTP server settings
@@ -146,7 +167,26 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')  # The App Password you g
 # Default sender address for emails
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER)
 
-
+# This section configures the logging for the project.
+# It is used for logging errors and other information.
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'debug.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
 
 
 
