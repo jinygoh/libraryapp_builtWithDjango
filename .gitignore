@@ -23,3 +23,6 @@ db.sqlite3
 
 # Staticfiles (if generated locally)
 # staticfiles/
+
+# Node.js
+node_modules/

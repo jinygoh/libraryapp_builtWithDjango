@@ -1,0 +1,61 @@
+<!-- This is the user dashboard template. -->
+<!-- It displays the user's loans and reviews. -->
+<h1>Dashboard</h1>
+
+<h2>My Loans</h2>
+<!-- The 'loans' variable will be passed from the controller. -->
+<!-- It will be an array of loan objects. -->
+<% if (loans && loans.length) { %>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Book</th>
+                <th>Borrow Date</th>
+                <th>Due Date</th>
+                <th>Return Date</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Loop through the loans and display them in a table. -->
+            <% loans.forEach(function(loan) { %>
+                <tr>
+                    <td><%= loan.Book.title %></td>
+                    <td><%= loan.borrow_date %></td>
+                    <td><%= loan.due_date %></td>
+                    <td><%= loan.return_date %></td>
+                    <td><%= loan.status %></td>
+                    <td>
+                        <!-- If the book has not been returned, show a 'Return' button. -->
+                        <% if (loan.status === 'borrowed') { %>
+                            <form action="/loan/<%= loan.id %>/return" method="POST">
+                                <button type="submit" class="btn btn-primary">Return</button>
+                            </form>
+                        <% } %>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+<% } else { %>
+    <p>You have no loans.</p>
+<% } %>
+
+<h2>My Reviews</h2>
+<!-- The 'reviews' variable will be passed from the controller. -->
+<!-- It will be an array of review objects. -->
+<% if (reviews && reviews.length) { %>
+    <ul class="list-group">
+        <!-- Loop through the reviews and display them in a list. -->
+        <% reviews.forEach(function(review) { %>
+            <li class="list-group-item">
+                <h5><%= review.Book.title %></h5>
+                <p>Rating: <%= review.rating %></p>
+                <p><%= review.review_text %></p>
+            </li>
+        <% }); %>
+    </ul>
+<% } else { %>
+    <p>You have no reviews.</p>
+<% } %>

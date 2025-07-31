@@ -1,0 +1,74 @@
+<!-- This is the book detail page template. -->
+<!-- It displays the details of a single book, including its reviews. -->
+<h1><%= book.title %></h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <img src="<%= book.image %>" class="img-fluid" alt="<%= book.title %>">
+    </div>
+    <div class="col-md-8">
+        <!-- Display the book's authors. -->
+        <p><strong>Authors:</strong>
+            <% if (book.Authors && book.Authors.length) { %>
+                <%= book.Authors.map(a => a.first_name + ' ' + a.last_name).join(', ') %>
+            <% } %>
+        </p>
+        <!-- Display the book's genres. -->
+        <p><strong>Genres:</strong>
+            <% if (book.Genres && book.Genres.length) { %>
+                <%= book.Genres.map(g => g.genre).join(', ') %>
+            <% } %>
+        </p>
+        <p><strong>ISBN:</strong> <%= book.isbn %></p>
+        <p><strong>Total Copies:</strong> <%= book.total_copies %></p>
+        <p><strong>Available Copies:</strong> <%= book.available_copies %></p>
+
+        <!-- If the book is available, show a 'Borrow' button. -->
+        <% if (book.available_copies > 0) { %>
+            <form action="/book/<%= book.id %>/borrow" method="POST">
+                <button type="submit" class="btn btn-primary">Borrow</button>
+            </form>
+        <% } else { %>
+            <p class="text-danger">This book is not available for borrowing.</p>
+        <% } %>
+    </div>
+</div>
+
+<hr>
+
+<h2>Reviews</h2>
+<!-- Display the book's reviews. -->
+<% if (reviews && reviews.length) { %>
+    <ul class="list-group">
+        <% reviews.forEach(function(review) { %>
+            <li class="list-group-item">
+                <p><strong>Rating:</strong> <%= review.rating %></p>
+                <p><%= review.review_text %></p>
+            </li>
+        <% }); %>
+    </ul>
+<% } else { %>
+    <p>No reviews yet.</p>
+<% } %>
+
+<hr>
+
+<h2>Add a Review</h2>
+<!-- Form for submitting a new review. -->
+<form action="/book/<%= book.id %>/review" method="POST">
+    <div class="form-group">
+        <label for="rating">Rating</label>
+        <select class="form-control" id="rating" name="rating">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="review_text">Review</label>
+        <textarea class="form-control" id="review_text" name="review_text" rows="3"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit Review</button>
+</form>

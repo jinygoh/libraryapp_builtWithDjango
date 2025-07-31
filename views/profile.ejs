@@ -1,0 +1,25 @@
+<!-- This is the user profile template. -->
+<!-- It allows users to view and edit their profile information. -->
+<h1>Profile</h1>
+
+<!-- The 'user' variable will be passed from the controller. -->
+<!-- It will be an object containing the user's data. -->
+<form action="/profile" method="POST">
+    <div class="form-group">
+        <label for="first_name">First Name</label>
+        <input type="text" class="form-control" id="first_name" name="first_name" value="<%= user.first_name %>">
+    </div>
+    <div class="form-group">
+        <label for="last_name">Last Name</label>
+        <input type="text" class="form-control" id="last_name" name="last_name" value="<%= user.last_name %>">
+    </div>
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" class="form-control" id="email" name="email" value="<%= user.email %>">
+    </div>
+    <div class="form-group">
+        <label for="date_of_birth">Date of Birth</label>
+        <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" value="<%= user.date_of_birth %>">
+    </div>
+    <button type="submit" class="btn btn-primary">Update Profile</button>
+</form>

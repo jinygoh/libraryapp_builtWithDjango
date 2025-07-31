@@ -1,0 +1,41 @@
+<!-- This is the staff books template. -->
+<!-- It displays a list of all books and allows staff to edit or delete them. -->
+<h1>Manage Books</h1>
+
+<a href="/staff/books/add" class="btn btn-primary mb-3">Add Book</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>ISBN</th>
+            <th>Available Copies</th>
+            <th>Total Copies</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% if (books && books.length) { %>
+            <% books.forEach(function(book) { %>
+                <tr>
+                    <td><%= book.title %></td>
+                    <td>
+                        <% if (book.Authors && book.Authors.length) { %>
+                            <%= book.Authors.map(a => a.first_name + ' ' + a.last_name).join(', ') %>
+                        <% } %>
+                    </td>
+                    <td><%= book.isbn %></td>
+                    <td><%= book.available_copies %></td>
+                    <td><%= book.total_copies %></td>
+                    <td>
+                        <a href="/staff/books/edit/<%= book.id %>" class="btn btn-warning">Edit</a>
+                        <form action="/staff/books/delete/<%= book.id %>" method="POST" style="display: inline;">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            <% }); %>
+        <% } %>
+    </tbody>
+</table>

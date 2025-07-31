@@ -1,0 +1,60 @@
+<!-- This is the staff dashboard template. -->
+<!-- It displays active loans and overdue books. -->
+<h1>Staff Dashboard</h1>
+
+<h2>Active Loans</h2>
+<% if (activeLoans && activeLoans.length) { %>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Book</th>
+                <th>User</th>
+                <th>Borrow Date</th>
+                <th>Due Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% activeLoans.forEach(function(loan) { %>
+                <tr>
+                    <td><%= loan.Book.title %></td>
+                    <td><%= loan.User.username %></td>
+                    <td><%= loan.borrow_date %></td>
+                    <td><%= loan.due_date %></td>
+                    <td><%= loan.status %></td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+<% } else { %>
+    <p>No active loans.</p>
+<% } %>
+
+<h2>Overdue Books</h2>
+<form action="/staff/send_overdue_emails" method="POST">
+    <button type="submit" class="btn btn-danger mb-3">Send Overdue Emails</button>
+</form>
+<% if (overdueBooks && overdueBooks.length) { %>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Book</th>
+                <th>User</th>
+                <th>Borrow Date</th>
+                <th>Due Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% overdueBooks.forEach(function(loan) { %>
+                <tr>
+                    <td><%= loan.Book.title %></td>
+                    <td><%= loan.User.username %></td>
+                    <td><%= loan.borrow_date %></td>
+                    <td><%= loan.due_date %></td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+<% } else { %>
+    <p>No overdue books.</p>
+<% } %>

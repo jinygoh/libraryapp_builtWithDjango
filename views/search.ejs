@@ -1,0 +1,31 @@
+<!-- This is the book search results template. -->
+<!-- It displays the books that match the user's search query. -->
+<h1>Search Results</h1>
+
+<!-- The 'books' and 'query' variables will be passed from the controller. -->
+<p>Showing results for: <strong><%= query %></strong></p>
+
+<% if (books && books.length) { %>
+    <div class="row">
+        <!-- Loop through the books and display them in a grid. -->
+        <% books.forEach(function(book) { %>
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <img src="<%= book.image %>" class="card-img-top" alt="<%= book.title %>">
+                    <div class="card-body">
+                        <h5 class="card-title"><%= book.title %></h5>
+                        <p class="card-text">
+                            <!-- Display the book's authors. -->
+                            <% if (book.Authors && book.Authors.length) { %>
+                                by <%= book.Authors.map(a => a.first_name + ' ' + a.last_name).join(', ') %>
+                            <% } %>
+                        </p>
+                        <a href="/book/<%= book.id %>" class="btn btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+        <% }); %>
+    </div>
+<% } else { %>
+    <p>No books found.</p>
+<% } %>
